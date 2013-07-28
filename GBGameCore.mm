@@ -406,11 +406,6 @@ static void writeSaveFile(const char* path, int type)
     return YES;
 }
 
-- (BOOL)canCheat
-{
-    return YES;
-}
-
 - (void)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled
 {
     if ([type isEqual: @"Unknown"] && [code rangeOfString:@"-"].location == NSNotFound)
