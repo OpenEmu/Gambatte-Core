@@ -283,10 +283,6 @@ static void writeSaveFile(const char* path, int type)
     return OEIntSizeMake(10, 9);
 }
 
-- (void)setupEmulation
-{
-}
-
 - (void)resetEmulation
 {
     retro_reset();
