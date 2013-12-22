@@ -39,8 +39,6 @@
 		828387BB0E6CDB6500A96E2C /* gameboy.icns in Resources */ = {isa = PBXBuildFile; fileRef = B5F6D8A80E66914F001CA5D3 /* gameboy.icns */; };
 		828387BD0E6CDB6500A96E2C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165FFE840EACC02AAC07 /* InfoPlist.strings */; };
 		828387E20E6CDB6E00A96E2C /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */; };
-		82CAFCD00FEDD38D00CCDC7E /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = 82CAFCCF0FEDD38D00CCDC7E /* dsa_pub.pem */; };
-		82CAFCEC0FEDD43700CCDC7E /* config.yaml in CopyFiles */ = {isa = PBXBuildFile; fileRef = 82CAFCD10FEDD39600CCDC7E /* config.yaml */; };
 		82F45FC50E88979600B7B023 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 82F45FC40E88979600B7B023 /* Preferences.xib */; };
 		94ABD6E9165340E500035061 /* chainresampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94ABD6BC165340E500035061 /* chainresampler.cpp */; };
 		94ABD6EA165340E500035061 /* i0.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94ABD6C3165340E500035061 /* i0.cpp */; };
@@ -108,7 +106,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 16;
 			files = (
-				82CAFCEC0FEDD43700CCDC7E /* config.yaml in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -117,11 +114,8 @@
 /* Begin PBXFileReference section */
 		089C1660FE840EACC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
-		32DBCF750370BD2300C91783 /* Gambatte_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Gambatte_Prefix.pch; sourceTree = "<group>"; };
 		828387810E6CDB2200A96E2C /* Gambatte.oecoreplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Gambatte.oecoreplugin; sourceTree = BUILT_PRODUCTS_DIR; };
 		828387820E6CDB2200A96E2C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		82CAFCCF0FEDD38D00CCDC7E /* dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dsa_pub.pem; sourceTree = "<group>"; };
-		82CAFCD10FEDD39600CCDC7E /* config.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = config.yaml; sourceTree = "<group>"; };
 		82F45FC40E88979600B7B023 /* Preferences.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = Preferences.xib; sourceTree = "<group>"; };
 		942597C7151470210074E3A3 /* OpenEmuBase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenEmuBase.framework; path = ../OpenEmu/build/Release/OpenEmuBase.framework; sourceTree = "<group>"; };
 		94ABD6B2165340E500035061 /* adaptivesleep.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = adaptivesleep.cpp; sourceTree = "<group>"; };
@@ -332,8 +326,6 @@
 		2A37F4AFFDCFA73011CA2CEA /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
-				82CAFCD10FEDD39600CCDC7E /* config.yaml */,
-				32DBCF750370BD2300C91783 /* Gambatte_Prefix.pch */,
 			);
 			name = "Other Sources";
 			sourceTree = "<group>";
@@ -341,7 +333,6 @@
 		2A37F4B8FDCFA73011CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				82CAFCCF0FEDD38D00CCDC7E /* dsa_pub.pem */,
 				828387820E6CDB2200A96E2C /* Info.plist */,
 				B5F6D8AC0E66921B001CA5D3 /* Credits.rtf */,
 				B5F6D8A80E66914F001CA5D3 /* gameboy.icns */,
@@ -661,7 +652,6 @@
 				828387BB0E6CDB6500A96E2C /* gameboy.icns in Resources */,
 				828387BD0E6CDB6500A96E2C /* InfoPlist.strings in Resources */,
 				82F45FC50E88979600B7B023 /* Preferences.xib in Resources */,
-				82CAFCD00FEDD38D00CCDC7E /* dsa_pub.pem in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
