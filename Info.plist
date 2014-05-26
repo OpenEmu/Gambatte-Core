@@ -22,6 +22,14 @@
 	<string>OEGameCoreController</string>
 	<key>OEGameCoreClass</key>
 	<string>GBGameCore</string>
+	<key>OEGameCoreOptions</key>
+	<dict>
+		<key>openemu.system.gb</key>
+		<dict>
+			<key>OEGameCoreSupportsCheatCode</key>
+			<true/>
+		</dict>
+	</dict>
 	<key>OEGameCorePlayerCount</key>
 	<string>1</string>
 	<key>OEProjectURL</key>
@@ -34,7 +42,5 @@
 	<string>1</string>
 	<key>SUFeedURL</key>
 	<string>https://raw.github.com/OpenEmu/OpenEmu-Update/master/gambatte_appcast.xml</string>
-	<key>OEGameCoreSupportsCheatCode</key>
-	<true/>
 </dict>
 </plist>
