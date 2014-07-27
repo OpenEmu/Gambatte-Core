@@ -414,17 +414,47 @@ static void writeSaveFile(const char* path, int type)
     block(YES, nil);
 }
 
+#pragma mark - Cheats
+
+NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];
+
 - (void)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled
 {
-    if ([type isEqual: @"Unknown"] && [code rangeOfString:@"-"].location == NSNotFound)
-        type = @"GameShark";
+    // Sanitize
+    code = [code stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     
-    if ([type isEqual: @"Unknown"] && [code rangeOfString:@"-"].location != NSNotFound)
-        type = @"Game Genie";
+    // Gambatte expects cheats UPPERCASE
+    code = [code uppercaseString];
     
-    const char *cheatCode = [code UTF8String];
-    const char *cheatType = [type UTF8String];
-    retro_cheat_set(nil, enabled, cheatCode, cheatType);
+    // Remove any spaces
+    code = [code stringByReplacingOccurrencesOfString:@" " withString:@""];
+    
+    if (enabled)
+        [cheatList setValue:@YES forKey:code];
+    else
+        [cheatList removeObjectForKey:code];
+    
+    NSMutableArray *combinedGameSharkCodes = [[NSMutableArray alloc] init];
+    NSMutableArray *combinedGameGenieCodes = [[NSMutableArray alloc] init];
+    
+    // Gambatte expects all cheats in one combined string per-type e.g. 01xxxxxx+01xxxxxx
+    // Add enabled per-type cheats to arrays and later join them all by a '+' separator
+    for (id key in cheatList)
+    {
+        if ([[cheatList valueForKey:key] isEqual:@YES])
+        {
+            // GameShark
+            if ([key rangeOfString:@"-"].location == NSNotFound)
+                [combinedGameSharkCodes addObject:key];
+            // Game Genie
+            else if ([key rangeOfString:@"-"].location != NSNotFound)
+                [combinedGameGenieCodes addObject:key];
+        }
+    }
+    
+    // Apply combined cheats or force a final reset if all cheats are disabled
+    retro_cheat_set(nil, enabled, [combinedGameSharkCodes count] != 0 ? [[combinedGameSharkCodes componentsJoinedByString:@"+"] UTF8String] : "0");
+    retro_cheat_set(nil, enabled, [combinedGameGenieCodes count] != 0 ? [[combinedGameGenieCodes componentsJoinedByString:@"+"] UTF8String] : "0-");
 }
 
 @end
