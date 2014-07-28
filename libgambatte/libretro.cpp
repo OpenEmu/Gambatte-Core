@@ -175,40 +175,47 @@ void retro_palette_swap()
         return;
     
     unsigned short *gbc_bios_palette = NULL;
-    unsigned *custom_palette = NULL;
-    bool isCustomPalette = false;
     
     switch (displayMode)
     {
         case 0:
         {
-            unsigned pal[] = {
-                8369468, 6728764, 3629872, 3223857,
-                8369468, 6728764, 3629872, 3223857,
-                8369468, 6728764, 3629872, 3223857
-            };
-            
-            isCustomPalette = true;
-            custom_palette = pal;
+            // GB Pea Soup Green
+            gb.setDmgPaletteColor(0, 0, 8369468);
+            gb.setDmgPaletteColor(0, 1, 6728764);
+            gb.setDmgPaletteColor(0, 2, 3629872);
+            gb.setDmgPaletteColor(0, 3, 3223857);
+            gb.setDmgPaletteColor(1, 0, 8369468);
+            gb.setDmgPaletteColor(1, 1, 6728764);
+            gb.setDmgPaletteColor(1, 2, 3629872);
+            gb.setDmgPaletteColor(1, 3, 3223857);
+            gb.setDmgPaletteColor(2, 0, 8369468);
+            gb.setDmgPaletteColor(2, 1, 6728764);
+            gb.setDmgPaletteColor(2, 2, 3629872);
+            gb.setDmgPaletteColor(2, 3, 3223857);
             
             displayMode++;
-            break;
+            return;
         }
 			
         case 1:
         {
             // GB Pocket
-            unsigned pal[] = {
-                13487791, 10987158, 6974033, 2828823,
-                13487791, 10987158, 6974033, 2828823,
-                13487791, 10987158, 6974033, 2828823
-            };
-            
-            isCustomPalette = true;
-            custom_palette = pal;
+            gb.setDmgPaletteColor(0, 0, 13487791);
+            gb.setDmgPaletteColor(0, 1, 10987158);
+            gb.setDmgPaletteColor(0, 2, 6974033);
+            gb.setDmgPaletteColor(0, 3, 2828823);
+            gb.setDmgPaletteColor(1, 0, 13487791);
+            gb.setDmgPaletteColor(1, 1, 10987158);
+            gb.setDmgPaletteColor(1, 2, 6974033);
+            gb.setDmgPaletteColor(1, 3, 2828823);
+            gb.setDmgPaletteColor(2, 0, 13487791);
+            gb.setDmgPaletteColor(2, 1, 10987158);
+            gb.setDmgPaletteColor(2, 2, 6974033);
+            gb.setDmgPaletteColor(2, 3, 2828823);
             
             displayMode++;
-            break;
+            return;
         }
 			
         case 2:
@@ -298,10 +305,7 @@ void retro_palette_swap()
     {
         for (unsigned colornum = 0; colornum < 4; ++colornum)
         {
-            if (isCustomPalette)
-                rgb32 = custom_palette[palnum * 4 + colornum];
-            else
-                rgb32 = gbcToRgb32(gbc_bios_palette[palnum * 4 + colornum]);
+            rgb32 = gbcToRgb32(gbc_bios_palette[palnum * 4 + colornum]);
             gb.setDmgPaletteColor(palnum, colornum, rgb32);
         }
     }
