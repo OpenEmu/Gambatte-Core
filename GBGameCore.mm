@@ -413,6 +413,11 @@ static void writeSaveFile(const char* path, int type)
     block(YES, nil);
 }
 
+- (void)changeDisplayMode
+{
+    retro_palette_swap();
+}
+
 #pragma mark - Cheats
 
 NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];

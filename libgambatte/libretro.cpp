@@ -16,6 +16,7 @@ static retro_audio_sample_batch_t audio_batch_cb;
 static retro_environment_t environ_cb;
 static gambatte::GB gb;
 static bool g_has_rgb32;
+static int displayMode = 0;
 
 namespace input
 {
@@ -168,6 +169,144 @@ bool retro_unserialize(const void *data, size_t size)
     return true;
 }
 
+void retro_palette_swap()
+{
+    if (gb.isCgb())
+        return;
+    
+    unsigned short *gbc_bios_palette = NULL;
+    unsigned *custom_palette = NULL;
+    bool isCustomPalette = false;
+    
+    switch (displayMode)
+    {
+        case 0:
+        {
+            unsigned pal[] = {
+                8369468, 6728764, 3629872, 3223857,
+                8369468, 6728764, 3629872, 3223857,
+                8369468, 6728764, 3629872, 3223857
+            };
+            
+            isCustomPalette = true;
+            custom_palette = pal;
+            
+            displayMode++;
+            break;
+        }
+			
+        case 1:
+        {
+            // GB Pocket
+            unsigned pal[] = {
+                13487791, 10987158, 6974033, 2828823,
+                13487791, 10987158, 6974033, 2828823,
+                13487791, 10987158, 6974033, 2828823
+            };
+            
+            isCustomPalette = true;
+            custom_palette = pal;
+            
+            displayMode++;
+            break;
+        }
+			
+        case 2:
+            gbc_bios_palette = const_cast<unsigned short*>(findGbcDirPal("GBC - Blue"));
+            displayMode++;
+            break;
+            
+        case 3:
+            gbc_bios_palette = const_cast<unsigned short*>(findGbcDirPal("GBC - Dark Blue"));
+            displayMode++;
+            break;
+            
+        case 4:
+            gbc_bios_palette = const_cast<unsigned short*>(findGbcDirPal("GBC - Green"));
+            displayMode++;
+            break;
+            
+        case 5:
+            gbc_bios_palette = const_cast<unsigned short*>(findGbcDirPal("GBC - Dark Green"));
+            displayMode++;
+            break;
+            
+        case 6:
+            gbc_bios_palette = const_cast<unsigned short*>(findGbcDirPal("GBC - Brown"));
+            displayMode++;
+            break;
+            
+        case 7:
+            gbc_bios_palette = const_cast<unsigned short*>(findGbcDirPal("GBC - Dark Brown"));
+            displayMode++;
+            break;
+            
+        case 8:
+            gbc_bios_palette = const_cast<unsigned short*>(findGbcDirPal("GBC - Red"));
+            displayMode++;
+            break;
+            
+        case 9:
+            gbc_bios_palette = const_cast<unsigned short*>(findGbcDirPal("GBC - Yellow"));
+            displayMode++;
+            break;
+            
+        case 10:
+            gbc_bios_palette = const_cast<unsigned short*>(findGbcDirPal("GBC - Orange"));
+            displayMode++;
+            break;
+            
+        case 11:
+            gbc_bios_palette = const_cast<unsigned short*>(findGbcDirPal("GBC - Pastel Mix"));
+            displayMode++;
+            break;
+            
+        case 12:
+            gbc_bios_palette = const_cast<unsigned short*>(findGbcDirPal("GBC - Inverted"));
+            displayMode++;
+            break;
+            
+        case 13:
+        {
+            std::string str = gb.romTitle(); // read ROM internal title
+            const char * internal_game_name = str.c_str();
+            gbc_bios_palette = const_cast<unsigned short*>(findGbcTitlePal(internal_game_name));
+            
+            if (gbc_bios_palette == 0)
+            {
+                gbc_bios_palette = const_cast<unsigned short*>(findGbcDirPal("GBC - Grayscale"));
+                displayMode = 0;
+            }
+            else
+                displayMode++;
+
+            break;
+        }
+            
+        case 14:
+            gbc_bios_palette = const_cast<unsigned short*>(findGbcDirPal("GBC - Grayscale"));
+            displayMode = 0;
+            break;
+			
+        default:
+            return;
+            break;
+    }
+    
+    unsigned rgb32 = 0;
+    for (unsigned palnum = 0; palnum < 3; ++palnum)
+    {
+        for (unsigned colornum = 0; colornum < 4; ++colornum)
+        {
+            if (isCustomPalette)
+                rgb32 = custom_palette[palnum * 4 + colornum];
+            else
+                rgb32 = gbcToRgb32(gbc_bios_palette[palnum * 4 + colornum]);
+            gb.setDmgPaletteColor(palnum, colornum, rgb32);
+        }
+    }
+}
+
 void retro_cheat_reset() {}
 void retro_cheat_set(unsigned index, bool enabled, const char *code)
 {
@@ -311,7 +450,12 @@ bool retro_load_game(const struct retro_game_info *info)
         }
         
         if (startswith(line, "Background0="))
+        {
             gb.setDmgPaletteColor(0, 0, rgb32);
+            printf("rgb32: %u\n", rgb32);
+            printf("rgb32: %d\n", rgb32);
+            printf("rgb32: %x\n", rgb32);
+        }
         else if (startswith(line, "Background1="))
             gb.setDmgPaletteColor(0, 1, rgb32);
         else if (startswith(line, "Background2="))

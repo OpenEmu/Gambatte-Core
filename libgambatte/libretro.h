@@ -544,6 +544,8 @@ extern "C" {
     bool retro_serialize(void *data, size_t size);
     bool retro_unserialize(const void *data, size_t size);
     
+    void retro_palette_swap(void);
+    
     void retro_cheat_reset(void);
     void retro_cheat_set(unsigned index, bool enabled, const char *code);
     
