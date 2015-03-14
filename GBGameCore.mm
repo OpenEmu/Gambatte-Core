@@ -1,6 +1,6 @@
 /*
- Copyright (c) 2009, OpenEmu Team
-
+ Copyright (c) 2015, OpenEmu Team
+ 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
      * Redistributions of source code must retain the above copyright
@@ -11,7 +11,7 @@
      * Neither the name of the OpenEmu Team nor the
        names of its contributors may be used to endorse or promote products
        derived from this software without specific prior written permission.
-
+ 
  THIS SOFTWARE IS PROVIDED BY OpenEmu Team ''AS IS'' AND ANY
  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -22,163 +22,56 @@
  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+*/
 
 #import "GBGameCore.h"
 #import <OpenEmuBase/OERingBuffer.h>
 #import "OEGBSystemResponderClient.h"
 #import <OpenGL/gl.h>
 
-#include "libretro.h"
+#include "gambatte.h"
+#include "gbcpalettes.h"
+#include "resamplerinfo.h"
+#include "resampler.h"
+
+gambatte::GB gb;
+Resampler *resampler;
+uint32_t pad[OEGBButtonCount];
+
+class GetInput : public gambatte::InputGetter
+{
+public:
+    unsigned operator()()
+    {
+        return pad[0];
+    }
+} static GetInput;
 
 @interface GBGameCore () <OEGBSystemResponderClient>
 {
     uint32_t *videoBuffer;
-    int videoWidth, videoHeight;
-    int16_t pad[2][8];
-    NSString *romName;
+    uint32_t *inSoundBuffer;
+    int16_t *outSoundBuffer;
     double sampleRate;
+    int displayMode;
 }
-
+- (void)outputAudio:(unsigned)frames;
+- (void)applyCheat:(NSString *)code;
+- (void)loadPalette;
 @end
-
-NSUInteger GBEmulatorValues[] = { RETRO_DEVICE_ID_JOYPAD_UP, RETRO_DEVICE_ID_JOYPAD_DOWN, RETRO_DEVICE_ID_JOYPAD_LEFT, RETRO_DEVICE_ID_JOYPAD_RIGHT, RETRO_DEVICE_ID_JOYPAD_A, RETRO_DEVICE_ID_JOYPAD_B, RETRO_DEVICE_ID_JOYPAD_START, RETRO_DEVICE_ID_JOYPAD_SELECT };
-NSString *GBEmulatorKeys[] = { @"Joypad@ Up", @"Joypad@ Down", @"Joypad@ Left", @"Joypad@ Right", @"Joypad@ 1", @"Joypad@ 2", @"Joypad@ Run", @"Joypad@ Select"};
 
 @implementation GBGameCore
 
 static __weak GBGameCore *_current;
 
-static void audio_callback(int16_t left, int16_t right)
-{
-    GET_CURRENT_AND_RETURN();
-
-	[[current ringBufferAtIndex:0] write:&left maxLength:2];
-    [[current ringBufferAtIndex:0] write:&right maxLength:2];
-}
-
-static size_t audio_batch_callback(const int16_t *data, size_t frames)
-{
-    GET_CURRENT_AND_RETURN(frames);
-
-    [[current ringBufferAtIndex:0] write:data maxLength:frames << 2];
-    return frames;
-}
-
-static void video_callback(const void *data, unsigned width, unsigned height, size_t pitch)
-{
-    GET_CURRENT_AND_RETURN();
-
-    current->videoWidth  = width;
-    current->videoHeight = height;
-
-    dispatch_queue_t the_queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-
-    dispatch_apply(height, the_queue, ^(size_t y){
-        const uint32_t *src = (uint32_t*)data + y * (pitch >> 2); //pitch is in bytes not pixels
-        uint32_t *dst = current->videoBuffer + y * 160;
-
-        memcpy(dst, src, sizeof(uint32_t)*width);
-    });
-}
-
-static void input_poll_callback(void)
-{
-	//NSLog(@"poll callback");
-}
-
-static int16_t input_state_callback(unsigned port, unsigned device, unsigned index, unsigned id)
-{
-    GET_CURRENT_AND_RETURN(0);
-
-    if(port == 0 & device == RETRO_DEVICE_JOYPAD)
-        return current->pad[0][id];
-    else if(port == 1 & device == RETRO_DEVICE_JOYPAD)
-        return current->pad[1][id];
-
-    return 0;
-}
-
-static bool environment_callback(unsigned cmd, void *data)
-{
-    GET_CURRENT_AND_RETURN(false);
-    
-    switch(cmd)
-    {
-        case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY :
-        {
-            NSString *biosPath = current.biosDirectoryPath;
-            
-            *(const char **)data = [biosPath UTF8String];
-            //NSLog(@"Environ SYSTEM_DIRECTORY: \"%@\".\n", biosPath);
-            break;
-        }
-        default :
-            //NSLog(@"Environ UNSUPPORTED (#%u).\n", cmd);
-            return false;
-    }
-
-    return true;
-}
-
-
-static void loadSaveFile(const char* path, int type)
-{
-    FILE *file;
-
-    file = fopen(path, "rb");
-    if(file == NULL) return;
-
-    size_t size = retro_get_memory_size(type);
-    void *data = retro_get_memory_data(type);
-
-    if(size == 0 || data == NULL)
-    {
-        fclose(file);
-        return;
-    }
-
-    int rc = fread(data, sizeof(uint8_t), size, file);
-    if(rc != size) NSLog(@"Couldn't load save file: %s.", path);
-    else           NSLog(@"Loaded save file: %s", path);
-
-    fclose(file);
-}
-
-static void writeSaveFile(const char* path, int type)
-{
-    size_t size = retro_get_memory_size(type);
-    void *data = retro_get_memory_data(type);
-
-    if(data != NULL && size > 0)
-    {
-        FILE *file = fopen(path, "wb");
-        if(file != NULL)
-        {
-            NSLog(@"Saving state %s. Size: %d bytes.", path, (int)size);
-            retro_serialize(data, size);
-            if(fwrite(data, sizeof(uint8_t), size, file) != size)
-                NSLog(@"Did not save state properly.");
-            fclose(file);
-        }
-    }
-}
-
-- (oneway void)didPushGBButton:(OEGBButton)button;
-{
-    pad[0][GBEmulatorValues[button]] = 1;
-}
-
-- (oneway void)didReleaseGBButton:(OEGBButton)button;
-{
-    pad[0][GBEmulatorValues[button]] = 0;
-}
-
 - (id)init
 {
     if((self = [super init]))
     {
-        videoBuffer = (uint32_t*)malloc(160 * 144 * 4);
+        videoBuffer = (uint32_t *)malloc(160 * 144 * 4);
+        inSoundBuffer = (uint32_t *)malloc(2064 * 2);
+        outSoundBuffer = (int16_t *)malloc(2064 * 2);
+        displayMode = 0;
     }
 
 	_current = self;
@@ -186,89 +79,87 @@ static void writeSaveFile(const char* path, int type)
 	return self;
 }
 
-#pragma mark Exectuion
+- (void)dealloc
+{
+    free(videoBuffer);
+    free(inSoundBuffer);
+    free(outSoundBuffer);
+}
+
+# pragma mark - Execution
+
+- (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error
+{
+    memset(pad, 0, sizeof(uint32_t) * OEGBButtonCount);
+
+    // Set battery save dir
+    NSURL *batterySavesDirectory = [NSURL fileURLWithPath:[self batterySavesDirectoryPath]];
+    [[NSFileManager defaultManager] createDirectoryAtURL:batterySavesDirectory withIntermediateDirectories:YES attributes:nil error:nil];
+    gb.setSaveDir([[batterySavesDirectory path] UTF8String]);
+
+    // Set input state callback
+    gb.setInputGetter(&GetInput);
+
+    // Setup resampler
+    double fps = 4194304.0 / 70224.0;
+    double inSampleRate = fps * 35112; // 2097152
+
+    // 2 = "Very high quality (polyphase FIR)", see resamplerinfo.cpp
+    resampler = ResamplerInfo::get(2).create(inSampleRate, 48000.0, 2 * 2064);
+
+    unsigned long mul, div;
+    resampler->exactRatio(mul, div);
+
+    double outSampleRate = inSampleRate * mul / div;
+    sampleRate = outSampleRate; // 47994.326636
+
+    if (gb.load([path UTF8String]) != 0)
+        return NO;
+
+    // Load built-in GBC palette for monochrome games if supported
+    if (!gb.isCgb())
+        [self loadPalette];
+
+    return YES;
+}
 
 - (void)executeFrame
 {
     [self executeFrameSkippingFrame:NO];
 }
 
-- (void)executeFrameSkippingFrame: (BOOL) skip
+- (void)executeFrameSkippingFrame:(BOOL)skip
 {
-    retro_run();
-}
+    size_t samples = 2064;
 
-- (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error
-{
-	memset(pad, 0, sizeof(int16_t) * 9);
-
-    const void *data;
-    size_t size;
-    romName = [path copy];
-
-    //load cart, read bytes, get length
-    NSData* dataObj = [NSData dataWithContentsOfFile:[romName stringByStandardizingPath]];
-    if(dataObj == nil) return false;
-    size = [dataObj length];
-    data = (uint8_t*)[dataObj bytes];
-    const char *meta = NULL;
-
-    retro_set_environment(environment_callback);
-	retro_init();
-
-    retro_set_audio_sample(audio_callback);
-    retro_set_audio_sample_batch(audio_batch_callback);
-    retro_set_video_refresh(video_callback);
-    retro_set_input_poll(input_poll_callback);
-    retro_set_input_state(input_state_callback);
-
-
-    const char *fullPath = [path UTF8String];
-
-    struct retro_game_info gameInfo = {NULL};
-    gameInfo.path = fullPath;
-    gameInfo.data = data;
-    gameInfo.size = size;
-    gameInfo.meta = meta;
-
-    if(retro_load_game(&gameInfo))
+    while (gb.runFor(videoBuffer, 160, inSoundBuffer, samples) == -1)
     {
-        NSString *path = romName;
-        NSString *extensionlessFilename = [[path lastPathComponent] stringByDeletingPathExtension];
-
-        NSString *batterySavesDirectory = [self batterySavesDirectoryPath];
-
-        if([batterySavesDirectory length] != 0)
-        {
-            [[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
-
-            NSString *filePath = [batterySavesDirectory stringByAppendingPathComponent:[extensionlessFilename stringByAppendingPathExtension:@"sav"]];
-
-            NSString *filePathRTC = [batterySavesDirectory stringByAppendingPathComponent:[extensionlessFilename stringByAppendingPathExtension:@"rtc"]];
-            
-            loadSaveFile([filePath UTF8String], RETRO_MEMORY_SAVE_RAM);
-            loadSaveFile([filePathRTC UTF8String], RETRO_MEMORY_RTC);
-        }
-
-        struct retro_system_av_info avInfo;
-        retro_get_system_av_info(&avInfo);
-
-        frameInterval = avInfo.timing.fps;
-        sampleRate = avInfo.timing.sample_rate;
-
-        //retro_set_controller_port_device(SNES_PORT_1, RETRO_DEVICE_JOYPAD);
-
-        retro_get_region();
-
-        retro_run();
-
-        return YES;
+        [self outputAudio:samples];
     }
 
-    return NO;
+    [self outputAudio:samples];
 }
 
-#pragma mark Video
+- (void)resetEmulation
+{
+    gb.reset();
+}
+
+- (void)stopEmulation
+{
+    gb.saveSavedata();
+
+    //delete resampler;
+
+    [super stopEmulation];
+}
+
+- (NSTimeInterval)frameInterval
+{
+    return 59.727501;
+}
+
+# pragma mark - Video
 
 - (const void *)videoBuffer
 {
@@ -277,7 +168,7 @@ static void writeSaveFile(const char* path, int type)
 
 - (OEIntRect)screenRect
 {
-    return OEIntRectMake(0, 0, videoWidth, videoHeight);
+    return OEIntRectMake(0, 0, 160, 144);
 }
 
 - (OEIntSize)bufferSize
@@ -288,43 +179,6 @@ static void writeSaveFile(const char* path, int type)
 - (OEIntSize)aspectSize
 {
     return OEIntSizeMake(10, 9);
-}
-
-- (void)resetEmulation
-{
-    retro_reset();
-}
-
-- (void)stopEmulation
-{
-    NSString *path = romName;
-    NSString *extensionlessFilename = [[path lastPathComponent] stringByDeletingPathExtension];
-
-    NSString *batterySavesDirectory = [self batterySavesDirectoryPath];
-
-    if([batterySavesDirectory length] != 0)
-    {
-        [[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
-
-        NSLog(@"Trying to save SRAM");
-
-        NSString *filePath = [batterySavesDirectory stringByAppendingPathComponent:[extensionlessFilename stringByAppendingPathExtension:@"sav"]];
-
-        NSString *filePathRTC = [batterySavesDirectory stringByAppendingPathComponent:[extensionlessFilename stringByAppendingPathExtension:@"rtc"]];
-        
-        writeSaveFile([filePath UTF8String], RETRO_MEMORY_SAVE_RAM);
-        writeSaveFile([filePathRTC UTF8String], RETRO_MEMORY_RTC);
-    }
-
-    NSLog(@"gb term");
-    retro_unload_game();
-    retro_deinit();
-    [super stopEmulation];
-}
-
-- (void)dealloc
-{
-    free(videoBuffer);
 }
 
 - (GLenum)pixelFormat
@@ -342,14 +196,11 @@ static void writeSaveFile(const char* path, int type)
     return GL_RGB8;
 }
 
+# pragma mark - Audio
+
 - (double)audioSampleRate
 {
-    return sampleRate ? sampleRate : 48000;
-}
-
-- (NSTimeInterval)frameInterval
-{
-    return frameInterval ? frameInterval : 2097152./35112.; // 59.7
+    return sampleRate;
 }
 
 - (NSUInteger)channelCount
@@ -357,65 +208,31 @@ static void writeSaveFile(const char* path, int type)
     return 2;
 }
 
+# pragma mark - Save States
+
 - (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block
 {
-    int serial_size = retro_serialize_size();
-    NSMutableData *stateData = [NSMutableData dataWithLength:serial_size];
-
-    if(!retro_serialize([stateData mutableBytes], serial_size))
-    {
-        NSError *error = [NSError errorWithDomain:OEGameCoreErrorDomain code:OEGameCoreCouldNotSaveStateError userInfo:@{
-            NSLocalizedDescriptionKey : @"Save state data could not be written",
-            NSLocalizedRecoverySuggestionErrorKey : @"The emulator could not write the state data."
-        }];
-        block(NO, error);
-        return;
-    }
-
-    __autoreleasing NSError *error = nil;
-    BOOL success = [stateData writeToFile:fileName options:NSDataWritingAtomic error:&error];
-
-    block(success, success ? nil : error);
+    int success = gb.saveState(0, 0, [fileName UTF8String]);
+    if(block) block(success==1, nil);
 }
 
 - (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block
 {
-    __autoreleasing NSError *error = nil;
-    NSData *data = [NSData dataWithContentsOfFile:fileName options:NSDataReadingMappedIfSafe | NSDataReadingUncached error:&error];
-
-    if(data == nil)
-    {
-        block(NO, error);
-        return;
-    }
-
-    int serial_size = retro_serialize_size();
-    if(serial_size != [data length])
-    {
-        NSError *error = [NSError errorWithDomain:OEGameCoreErrorDomain code:OEGameCoreStateHasWrongSizeError userInfo:@{
-            NSLocalizedDescriptionKey : @"Save state has wrong file size.",
-            NSLocalizedRecoverySuggestionErrorKey : [NSString stringWithFormat:@"The size of the file %@ does not have the right size, %d expected, got: %ld.", fileName, serial_size, [data length]],
-        }];
-        block(NO, error);
-        return;
-    }
-
-    if(!retro_unserialize([data bytes], serial_size))
-    {
-        NSError *error = [NSError errorWithDomain:OEGameCoreErrorDomain code:OEGameCoreCouldNotLoadStateError userInfo:@{
-            NSLocalizedDescriptionKey : @"The save state data could not be read",
-            NSLocalizedRecoverySuggestionErrorKey : [NSString stringWithFormat:@"Could not read the file state in %@.", fileName]
-        }];
-        block(NO, error);
-        return;
-    }
-
-    block(YES, nil);
+    int success = gb.loadState([fileName UTF8String]);
+    if(block) block(success==1, nil);
 }
 
-- (void)changeDisplayMode
+# pragma mark - Input
+
+const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gambatte::InputGetter::LEFT, gambatte::InputGetter::RIGHT, gambatte::InputGetter::A, gambatte::InputGetter::B, gambatte::InputGetter::START, gambatte::InputGetter::SELECT};
+- (oneway void)didPushGBButton:(OEGBButton)button;
 {
-    retro_palette_swap();
+    pad[0] |= GBMap[button];
+}
+
+- (oneway void)didReleaseGBButton:(OEGBButton)button;
+{
+    pad[0] &= ~GBMap[button];
 }
 
 #pragma mark - Cheats
@@ -426,21 +243,21 @@ NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];
 {
     // Sanitize
     code = [code stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-    
+
     // Gambatte expects cheats UPPERCASE
     code = [code uppercaseString];
-    
+
     // Remove any spaces
     code = [code stringByReplacingOccurrencesOfString:@" " withString:@""];
-    
+
     if (enabled)
         [cheatList setValue:@YES forKey:code];
     else
         [cheatList removeObjectForKey:code];
-    
+
     NSMutableArray *combinedGameSharkCodes = [[NSMutableArray alloc] init];
     NSMutableArray *combinedGameGenieCodes = [[NSMutableArray alloc] init];
-    
+
     // Gambatte expects all cheats in one combined string per-type e.g. 01xxxxxx+01xxxxxx
     // Add enabled per-type cheats to arrays and later join them all by a '+' separator
     for (id key in cheatList)
@@ -455,10 +272,202 @@ NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];
                 [combinedGameGenieCodes addObject:key];
         }
     }
-    
+
     // Apply combined cheats or force a final reset if all cheats are disabled
-    retro_cheat_set(nil, enabled, [combinedGameSharkCodes count] != 0 ? [[combinedGameSharkCodes componentsJoinedByString:@"+"] UTF8String] : "0");
-    retro_cheat_set(nil, enabled, [combinedGameGenieCodes count] != 0 ? [[combinedGameGenieCodes componentsJoinedByString:@"+"] UTF8String] : "0-");
+    [self applyCheat:[combinedGameSharkCodes count] != 0 ? [combinedGameSharkCodes componentsJoinedByString:@"+"] : @"0"];
+    [self applyCheat:[combinedGameGenieCodes count] != 0 ? [combinedGameGenieCodes componentsJoinedByString:@"+"] : @"0-"];
+}
+
+# pragma mark - Display Mode
+
+- (void)changeDisplayMode
+{
+    if (gb.isCgb())
+        return;
+
+    unsigned short *gbc_bios_palette = NULL;
+
+    switch (displayMode)
+    {
+        case 0:
+        {
+            // GB Pea Soup Green
+            gb.setDmgPaletteColor(0, 0, 8369468);
+            gb.setDmgPaletteColor(0, 1, 6728764);
+            gb.setDmgPaletteColor(0, 2, 3629872);
+            gb.setDmgPaletteColor(0, 3, 3223857);
+            gb.setDmgPaletteColor(1, 0, 8369468);
+            gb.setDmgPaletteColor(1, 1, 6728764);
+            gb.setDmgPaletteColor(1, 2, 3629872);
+            gb.setDmgPaletteColor(1, 3, 3223857);
+            gb.setDmgPaletteColor(2, 0, 8369468);
+            gb.setDmgPaletteColor(2, 1, 6728764);
+            gb.setDmgPaletteColor(2, 2, 3629872);
+            gb.setDmgPaletteColor(2, 3, 3223857);
+
+            displayMode++;
+            return;
+        }
+
+        case 1:
+        {
+            // GB Pocket
+            gb.setDmgPaletteColor(0, 0, 13487791);
+            gb.setDmgPaletteColor(0, 1, 10987158);
+            gb.setDmgPaletteColor(0, 2, 6974033);
+            gb.setDmgPaletteColor(0, 3, 2828823);
+            gb.setDmgPaletteColor(1, 0, 13487791);
+            gb.setDmgPaletteColor(1, 1, 10987158);
+            gb.setDmgPaletteColor(1, 2, 6974033);
+            gb.setDmgPaletteColor(1, 3, 2828823);
+            gb.setDmgPaletteColor(2, 0, 13487791);
+            gb.setDmgPaletteColor(2, 1, 10987158);
+            gb.setDmgPaletteColor(2, 2, 6974033);
+            gb.setDmgPaletteColor(2, 3, 2828823);
+
+            displayMode++;
+            return;
+        }
+
+        case 2:
+            gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("GBC - Blue"));
+            displayMode++;
+            break;
+
+        case 3:
+            gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("GBC - Dark Blue"));
+            displayMode++;
+            break;
+
+        case 4:
+            gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("GBC - Green"));
+            displayMode++;
+            break;
+
+        case 5:
+            gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("GBC - Dark Green"));
+            displayMode++;
+            break;
+
+        case 6:
+            gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("GBC - Brown"));
+            displayMode++;
+            break;
+
+        case 7:
+            gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("GBC - Dark Brown"));
+            displayMode++;
+            break;
+
+        case 8:
+            gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("GBC - Red"));
+            displayMode++;
+            break;
+
+        case 9:
+            gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("GBC - Yellow"));
+            displayMode++;
+            break;
+
+        case 10:
+            gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("GBC - Orange"));
+            displayMode++;
+            break;
+
+        case 11:
+            gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("GBC - Pastel Mix"));
+            displayMode++;
+            break;
+
+        case 12:
+            gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("GBC - Inverted"));
+            displayMode++;
+            break;
+
+        case 13:
+        {
+            std::string str = gb.romTitle(); // read ROM internal title
+            const char *internal_game_name = str.c_str();
+            gbc_bios_palette = const_cast<unsigned short *>(findGbcTitlePal(internal_game_name));
+
+            if (gbc_bios_palette == 0)
+            {
+                gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("GBC - Grayscale"));
+                displayMode = 0;
+            }
+            else
+                displayMode++;
+
+            break;
+        }
+
+        case 14:
+            gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("GBC - Grayscale"));
+            displayMode = 0;
+            break;
+
+        default:
+            return;
+            break;
+    }
+
+    unsigned rgb32 = 0;
+    for (unsigned palnum = 0; palnum < 3; ++palnum)
+    {
+        for (unsigned colornum = 0; colornum < 4; ++colornum)
+        {
+            rgb32 = gbcToRgb32(gbc_bios_palette[palnum * 4 + colornum]);
+            gb.setDmgPaletteColor(palnum, colornum, rgb32);
+        }
+    }
+}
+
+# pragma mark - Misc Helper Methods
+
+- (void)outputAudio:(unsigned)frames
+{
+    if (!frames)
+        return;
+
+    size_t len = resampler->resample(outSoundBuffer, reinterpret_cast<const int16_t *>(inSoundBuffer), frames);
+
+    if (len)
+        [[self ringBufferAtIndex:0] write:outSoundBuffer maxLength:len << 2];
+}
+
+- (void)applyCheat:(NSString *)code
+{
+    std::string s = [code UTF8String];
+    if (s.find("-") != std::string::npos)
+        gb.setGameGenie(s);
+    else
+        gb.setGameShark(s);
+}
+
+- (void)loadPalette
+{
+    std::string str = gb.romTitle(); // read ROM internal title
+    const char *internal_game_name = str.c_str();
+
+    // load a GBC BIOS builtin palette
+    unsigned short *gbc_bios_palette = NULL;
+    gbc_bios_palette = const_cast<unsigned short *>(findGbcTitlePal(internal_game_name));
+
+    if (gbc_bios_palette == 0)
+    {
+        // no custom palette found, load the default (Original Grayscale)
+        gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("GBC - Grayscale"));
+    }
+
+    unsigned rgb32 = 0;
+    for (unsigned palnum = 0; palnum < 3; ++palnum)
+    {
+        for (unsigned colornum = 0; colornum < 4; ++colornum)
+        {
+            rgb32 = gbcToRgb32(gbc_bios_palette[palnum * 4 + colornum]);
+            gb.setDmgPaletteColor(palnum, colornum, rgb32);
+        }
+    }
 }
 
 @end

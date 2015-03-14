@@ -19,29 +19,24 @@
 #include "rateest.h"
 #include <cstdlib>
 
-void RateEst::SumQueue::reset() {
-	q.clear();
-	samples_ = usecs_ = 0;
-}
-
-void RateEst::SumQueue::push(const long samples, const usec_t usecs) {
-	q.push_back(pair_t(samples, usecs));
+void RateEst::SumQueue::push(std::ptrdiff_t const samples, usec_t const usecs) {
+	q_.push_back(std::make_pair(samples, usecs));
 	samples_ += samples;
 	usecs_ += usecs;
 }
 
 void RateEst::SumQueue::pop() {
-	const pair_t &f = q.front();
+	std::pair<std::ptrdiff_t, usec_t> const &f = q_.front();
 	samples_ -= f.first;
 	usecs_ -= f.second;
-	q.pop_front();
+	q_.pop_front();
 }
 
-static usec_t sampleUsecs(long samples, long rate) {
-	return static_cast<usec_t>((samples * 1000000.0f) / (rate ? rate : 1) + 0.5f);
+static usec_t sampleUsecs(std::ptrdiff_t samples, long rate) {
+	return usec_t((samples * 1000000.0f) / (rate ? rate : 1) + 0.5f);
 }
 
-static long limit(long est, const long reference) {
+static long limit(long est, long const reference) {
 	if (est > reference + (reference >> 6))
 		est = reference + (reference >> 6);
 	else if (est < reference - (reference >> 6))
@@ -50,45 +45,47 @@ static long limit(long est, const long reference) {
 	return est;
 }
 
-void RateEst::init(long srate, long reference, const long maxSamplePeriod) {
-	maxPeriod = sampleUsecs(maxSamplePeriod, reference);
-
-	srate <<= UPSHIFT;
-	reference <<= UPSHIFT;
-
-	this->srate = limit(srate, reference);
-	last = 0;
-	this->reference = reference;
-	samples = ((this->srate >> UPSHIFT) * 12) << 5;
-	usecs = 12000000 << 5;
-	sumq.reset();
+RateEst::RateEst(long const nominalSampleRate, std::size_t const maxValidFeedPeriodSamples)
+: srate_(nominalSampleRate * est_scale)
+, reference_(srate_)
+, maxPeriod_(sampleUsecs(maxValidFeedPeriodSamples, nominalSampleRate))
+, last_(0)
+, t_(6000)
+, s_(nominalSampleRate * 6)
+, st_(s_ * t_)
+, t2_(t_ * t_)
+{
 }
 
-void RateEst::feed(long samplesIn, const usec_t now) {
-	usec_t usecsIn = now - last;
+void RateEst::feed(std::ptrdiff_t samplesIn, usec_t const now) {
+	usec_t usecsIn = now - last_;
 
-	if (last && usecsIn < maxPeriod) {
-		sumq.push(samplesIn, usecsIn);
+	if (last_ && usecsIn < maxPeriod_) {
+		sumq_.push(samplesIn, usecsIn);
 
-		while ((usecsIn = sumq.usecs()) > 100000) {
-			samplesIn = sumq.samples();
-			sumq.pop();
+		while ((usecsIn = sumq_.usecs()) > 100000) {
+			samplesIn = sumq_.samples();
+			sumq_.pop();
 
-			if (std::abs(static_cast<long>(samplesIn * (1000000.0f * UP) / usecsIn) - reference) < reference >> 1) {
-				samples += (samplesIn - sumq.samples()) << 5;
-				usecs += (usecsIn - sumq.usecs()) << 5;
+			long const srateIn = long(samplesIn * (1000000.0f * est_scale) / usecsIn);
+			if (std::abs(srateIn - reference_) < reference_ >> 1) {
+				s_ +=  samplesIn - sumq_.samples()         ;
+				t_ += (  usecsIn - sumq_.usecs()  ) * 0.001;
+				st_ += s_ * t_;
+				t2_ += t_ * t_;
 
-				long est = static_cast<long>(samples * (1000000.0f * UP) / usecs + 0.5f);
-				est = limit((srate * 31 + est + 16) >> 5, reference);
-				srate = est;
+				long est = long(st_ * (1000.0 * est_scale) / t2_ + 0.5);
+				srate_ = limit((srate_ * 31 + est + 16) >> 5, reference_);
 
-				if (usecs > 16000000 << 5) {
-					samples = (samples * 3 + 2) >> 2;
-					usecs = (usecs * 3 + 2) >> 2;
+				if (t_ > 8000) {
+					s_ *= 3.0 / 4;
+					t_ *= 3.0 / 4;
+					st_ *= 9.0 / 16;
+					t2_ *= 9.0 / 16;
 				}
 			}
 		}
 	}
 
-	last = now;
+	last_ = now;
 }

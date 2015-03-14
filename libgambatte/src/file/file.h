@@ -2,7 +2,7 @@
 Copyright (C) 2007 by Nach
 http://nsrt.edgeemu.com
 
-Copyright (C) 2007-2011 by Sindre Aamås
+Copyright (C) 2007-2011 by sinamas <sinamas at users.sourceforge.net>
 sinamas@users.sourceforge.net
 
 This program is free software; you can redistribute it and/or modify
@@ -22,7 +22,7 @@ Free Software Foundation, Inc.,
 #ifndef GAMBATTE_FILE_H
 #define GAMBATTE_FILE_H
 
-#include <memory>
+#include "transfer_ptr.h"
 #include <string>
 
 namespace gambatte {
@@ -36,7 +36,7 @@ public:
 	virtual bool fail() const = 0;
 };
 
-std::auto_ptr<File> newFileInstance(const std::string &filepath);
+transfer_ptr<File> newFileInstance(std::string const &filepath);
 
 }
 
