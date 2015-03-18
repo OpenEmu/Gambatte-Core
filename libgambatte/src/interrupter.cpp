@@ -52,7 +52,7 @@ void Interrupter::setGameShark(std::string const &codes) {
 	gsCodes_.clear();
 
 	for (std::size_t pos = 0; pos < codes.length(); pos += code.length() + 1) {
-		code = codes.substr(pos, codes.find(';', pos) - pos);
+		code = codes.substr(pos, codes.find('+', pos) - pos);
 		if (code.length() >= 8) {
 			GsCode gs;
 			gs.type  =  asHex(code[0]) << 4 | asHex(code[1]);
@@ -68,7 +68,7 @@ void Interrupter::setGameShark(std::string const &codes) {
 
 void Interrupter::applyVblankCheats(unsigned long const cc, Memory &memory) {
 	for (std::size_t i = 0, size = gsCodes_.size(); i < size; ++i) {
-		if (gsCodes_[i].type == 0x01)
+		if (gsCodes_[i].type == 0x01 || gsCodes_[i].type == 0x91)
 			memory.write(gsCodes_[i].address, gsCodes_[i].value, cc);
 	}
 }
