@@ -29,6 +29,7 @@
 #import "OEGBSystemResponderClient.h"
 #import <OpenGL/gl.h>
 
+#include <sstream>
 #include "gambatte.h"
 #include "gbcpalettes.h"
 #include "resamplerinfo.h"
@@ -220,6 +221,65 @@ static __weak GBGameCore *_current;
 {
     int success = gb.loadState([fileName UTF8String]);
     if(block) block(success==1, nil);
+}
+
+- (NSData*)serializeStateWithError:(NSError **)outError
+{
+    std::stringstream stream(std::ios::in|std::ios::out|std::ios::binary);
+    
+    if(gb.serializeState(stream))
+    {
+        stream.seekg(0, std::ios::end);
+        NSUInteger length = stream.tellg();
+        stream.seekg(0, std::ios::beg);
+        
+        char *bytes = (char *)malloc(length);
+        stream.read(bytes, length);
+        
+        return [NSData dataWithBytesNoCopy:bytes length:length];
+    }
+    else
+    {
+        if(outError)
+        {
+            *outError = [NSError errorWithDomain:OEGameCoreErrorDomain
+                                            code:OEGameCoreCouldNotSaveStateError
+                                        userInfo:@{
+                                                   NSLocalizedDescriptionKey : @"Save state data could not be written",
+                                                   NSLocalizedRecoverySuggestionErrorKey : @"The emulator could not write the state data."
+                                                   }];
+        }
+        
+        return nil;
+    }
+}
+
+- (BOOL)deserializeState:(NSData *)state withError:(NSError **)outError
+{
+    std::stringstream stream(std::ios::in|std::ios::out|std::ios::binary);
+    
+    char const *bytes = (char const *)([state bytes]);
+    std::streamsize size = [state length];
+    stream.write(bytes, size);
+    
+    if(gb.deserializeState(stream))
+    {
+        return YES;
+    }
+    else
+    {
+        if(outError)
+        {
+            *outError = [NSError errorWithDomain:OEGameCoreErrorDomain
+                                            code:OEGameCoreCouldNotLoadStateError
+                                        userInfo:@{
+                                                   NSLocalizedDescriptionKey : @"The save state data could not be read",
+                                                   NSLocalizedRecoverySuggestionErrorKey : @"Could not load data from the save state"
+                                                   }];
+        }
+        
+        return NO;
+    }
 }
 
 # pragma mark - Input
