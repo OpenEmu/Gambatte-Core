@@ -130,6 +130,33 @@ void GB::setDmgPaletteColor(int palNum, int colorNum, unsigned long rgb32) {
 	p_->cpu.setDmgPaletteColor(palNum, colorNum, rgb32);
 }
 
+bool GB::serializeState(std::ostream &stream) {
+    if (p_->cpu.loaded()) {
+        SaveState state;
+        p_->cpu.setStatePtrs(state);
+        p_->cpu.saveState(state);
+        return StateSaver::serializeState(state, stream);
+    }
+    
+    return false;
+}
+
+bool GB::deserializeState(std::istream &stream) {
+    if (p_->cpu.loaded()) {
+        p_->cpu.saveSavedata();
+        
+        SaveState state;
+        p_->cpu.setStatePtrs(state);
+        
+        if (StateSaver::deserializeState(state, stream)) {
+            p_->cpu.loadState(state);
+            return true;
+        }
+    }
+    
+    return false;
+}
+
 bool GB::loadState(std::string const &filepath) {
 	if (p_->cpu.loaded()) {
 		p_->cpu.saveSavedata();

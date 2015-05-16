@@ -111,7 +111,17 @@ public:
 	bool isLoaded() const;
 
 	/** Writes persistent cartridge data to disk. Done implicitly on ROM close. */
-	void saveSavedata();
+    void saveSavedata();
+    
+    /** Serializes state data to 'stream'
+      * @return success
+      */
+    bool serializeState(std::ostream &stream);
+    
+    /** Deserializes state data from 'stream'.
+     * @return success
+     */
+    bool deserializeState(std::istream &stream);
 
 	/**
 	  * Saves emulator state to the state slot selected with selectState().
