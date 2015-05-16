@@ -402,6 +402,55 @@ static SaverList list;
 } // anon namespace
 
 namespace gambatte {
+    
+bool StateSaver::serializeState(SaveState const &state, std::ostream &stream) {
+    if (!stream)
+        return false;
+    
+    { static char const ver[] = { 0, 1 }; stream.write(ver, sizeof ver); }
+    writeSnapShot(stream, 0, 0);
+    
+    for (SaverList::const_iterator it = list.begin(); it != list.end(); ++it) {
+        stream.write(it->label, it->labelsize);
+        (*it->save)(stream, state);
+    }
+    
+    return !stream.fail();
+}
+
+bool StateSaver::deserializeState(SaveState &state, std::istream &stream) {
+    if (!stream || stream.get() != 0)
+        return false;
+    
+    stream.ignore();
+    stream.ignore(get24(stream));
+    
+    Array<char> const labelbuf(list.maxLabelsize());
+    Saver const labelbufSaver = { labelbuf, 0, 0, list.maxLabelsize() };
+    SaverList::const_iterator done = list.begin();
+    
+    while (stream.good() && done != list.end()) {
+        stream.getline(labelbuf, list.maxLabelsize(), NUL);
+        
+        SaverList::const_iterator it = done;
+        if (std::strcmp(labelbuf, it->label)) {
+            it = std::lower_bound(it + 1, list.end(), labelbufSaver);
+            
+            if (it == list.end() || std::strcmp(labelbuf, it->label)) {
+                stream.ignore(get24(stream));
+                continue;
+            }
+        } else
+            ++done;
+        
+        (*it->load)(stream, state);
+    }
+    
+    state.cpu.cycleCounter &= 0x7FFFFFFF;
+    state.spu.cycleCounter &= 0x7FFFFFFF;
+    
+    return true;
+}
 
 bool StateSaver::saveState(SaveState const &state,uint_least32_t const *videoBuf, std::ptrdiff_t pitch, std::string const &filename) {
 	std::ofstream file(filename.c_str(), std::ios_base::binary);

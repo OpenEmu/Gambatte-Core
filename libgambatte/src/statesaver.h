@@ -33,6 +33,9 @@ public:
 	enum { ss_div = 1 << 2 };
 	enum { ss_width = 160 >> ss_shift };
 	enum { ss_height = 144 >> ss_shift };
+    
+    static bool serializeState(SaveState const &state, std::ostream &stream);
+    static bool deserializeState(SaveState &state, std::istream &stream);
 
 	static bool saveState(SaveState const &state,
 			uint_least32_t const *videoBuf, std::ptrdiff_t pitch,
