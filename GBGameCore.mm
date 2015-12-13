@@ -56,14 +56,13 @@ public:
     double sampleRate;
     int displayMode;
 }
-- (void)outputAudio:(unsigned)frames;
+
 - (void)applyCheat:(NSString *)code;
 - (void)loadPalette;
+
 @end
 
 @implementation GBGameCore
-
-static __weak GBGameCore *_current;
 
 - (id)init
 {
@@ -74,8 +73,6 @@ static __weak GBGameCore *_current;
         outSoundBuffer = (int16_t *)malloc(2064 * 2 * 2);
         displayMode = 0;
     }
-
-	_current = self;
 
 	return self;
 }
@@ -126,17 +123,10 @@ static __weak GBGameCore *_current;
 
 - (void)executeFrame
 {
-    [self executeFrameSkippingFrame:NO];
-}
-
-- (void)executeFrameSkippingFrame:(BOOL)skip
-{
     size_t samples = 2064;
 
     while (gb.runFor(videoBuffer, 160, inSoundBuffer, samples) == -1)
-    {
         [self outputAudio:samples];
-    }
 
     [self outputAudio:samples];
 }
@@ -223,12 +213,11 @@ static __weak GBGameCore *_current;
     if(block) block(success==1, nil);
 }
 
-- (NSData*)serializeStateWithError:(NSError **)outError
+- (NSData *)serializeStateWithError:(NSError **)outError
 {
     std::stringstream stream(std::ios::in|std::ios::out|std::ios::binary);
     
-    if(gb.serializeState(stream))
-    {
+    if(gb.serializeState(stream)) {
         stream.seekg(0, std::ios::end);
         NSUInteger length = stream.tellg();
         stream.seekg(0, std::ios::beg);
@@ -238,20 +227,15 @@ static __weak GBGameCore *_current;
         
         return [NSData dataWithBytesNoCopy:bytes length:length];
     }
-    else
-    {
-        if(outError)
-        {
-            *outError = [NSError errorWithDomain:OEGameCoreErrorDomain
-                                            code:OEGameCoreCouldNotSaveStateError
-                                        userInfo:@{
-                                                   NSLocalizedDescriptionKey : @"Save state data could not be written",
-                                                   NSLocalizedRecoverySuggestionErrorKey : @"The emulator could not write the state data."
-                                                   }];
-        }
-        
-        return nil;
+
+    if(outError) {
+        *outError = [NSError errorWithDomain:OEGameCoreErrorDomain code:OEGameCoreCouldNotSaveStateError userInfo:@{
+            NSLocalizedDescriptionKey : @"Save state data could not be written",
+            NSLocalizedRecoverySuggestionErrorKey : @"The emulator could not write the state data."
+        }];
     }
+    
+    return nil;
 }
 
 - (BOOL)deserializeState:(NSData *)state withError:(NSError **)outError
@@ -263,23 +247,15 @@ static __weak GBGameCore *_current;
     stream.write(bytes, size);
     
     if(gb.deserializeState(stream))
-    {
         return YES;
+
+    if(outError) {
+        *outError = [NSError errorWithDomain:OEGameCoreErrorDomain code:OEGameCoreCouldNotLoadStateError userInfo:@{
+            NSLocalizedDescriptionKey : @"The save state data could not be read",
+            NSLocalizedRecoverySuggestionErrorKey : @"Could not load data from the save state"
+        }];
     }
-    else
-    {
-        if(outError)
-        {
-            *outError = [NSError errorWithDomain:OEGameCoreErrorDomain
-                                            code:OEGameCoreCouldNotLoadStateError
-                                        userInfo:@{
-                                                   NSLocalizedDescriptionKey : @"The save state data could not be read",
-                                                   NSLocalizedRecoverySuggestionErrorKey : @"Could not load data from the save state"
-                                                   }];
-        }
-        
-        return NO;
-    }
+    return NO;
 }
 
 # pragma mark - Input
@@ -484,7 +460,7 @@ NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];
 
 # pragma mark - Misc Helper Methods
 
-- (void)outputAudio:(unsigned)frames
+- (void)outputAudio:(size_t)frames
 {
     if (!frames)
         return;
