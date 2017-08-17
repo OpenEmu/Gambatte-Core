@@ -92,7 +92,7 @@ public:
     // Set battery save dir
     NSURL *batterySavesDirectory = [NSURL fileURLWithPath:[self batterySavesDirectoryPath]];
     [[NSFileManager defaultManager] createDirectoryAtURL:batterySavesDirectory withIntermediateDirectories:YES attributes:nil error:nil];
-    gb.setSaveDir([[batterySavesDirectory path] UTF8String]);
+    gb.setSaveDir(batterySavesDirectory.path.fileSystemRepresentation);
 
     // Set input state callback
     gb.setInputGetter(&GetInput);
@@ -110,7 +110,7 @@ public:
     double outSampleRate = inSampleRate * mul / div;
     sampleRate = outSampleRate; // 47994.326636
 
-    if (gb.load([path UTF8String]) != 0)
+    if (gb.load(path.fileSystemRepresentation) != 0)
         return NO;
 
     // Load built-in GBC palette for monochrome games if supported
@@ -201,13 +201,13 @@ public:
 
 - (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block
 {
-    int success = gb.saveState(0, 0, [fileName UTF8String]);
+    int success = gb.saveState(0, 0, fileName.fileSystemRepresentation);
     if(block) block(success==1, nil);
 }
 
 - (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block
 {
-    int success = gb.loadState([fileName UTF8String]);
+    int success = gb.loadState(fileName.fileSystemRepresentation);
     if(block) block(success==1, nil);
 }
 
