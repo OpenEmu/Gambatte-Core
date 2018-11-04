@@ -35,6 +35,12 @@
 #include "resamplerinfo.h"
 #include "resampler.h"
 
+#define Option(_NAME_, _PREFKEY_) @{ OEGameCoreDisplayModeNameKey : _NAME_, OEGameCoreDisplayModePrefKeyNameKey : _PREFKEY_, OEGameCoreDisplayModeStateKey : @NO, }
+#define OptionIndented(_NAME_, _PREFKEY_) @{ OEGameCoreDisplayModeNameKey : _NAME_, OEGameCoreDisplayModePrefKeyNameKey : _PREFKEY_, OEGameCoreDisplayModeStateKey : @NO, OEGameCoreDisplayModeIndentationLevelKey : @(1), }
+#define OptionToggleable(_NAME_, _PREFKEY_) @{ OEGameCoreDisplayModeNameKey : _NAME_, OEGameCoreDisplayModePrefKeyNameKey : _PREFKEY_, OEGameCoreDisplayModeStateKey : @NO, OEGameCoreDisplayModeAllowsToggleKey : @YES, }
+#define Label(_NAME_) @{ OEGameCoreDisplayModeLabelKey : _NAME_, }
+#define SeparatorItem() @{ OEGameCoreDisplayModeSeparatorItemKey : [NSNull null],}
+
 gambatte::GB gb;
 Resampler *resampler;
 uint32_t pad[OEGBButtonCount];
@@ -55,10 +61,16 @@ public:
     int16_t *outSoundBuffer;
     double sampleRate;
     int displayMode;
+    NSArray *_availableDisplayModes;
 }
 
 - (void)applyCheat:(NSString *)code;
+
+- (NSString *)gameInternalName;
+- (BOOL)gameHasInternalPalette;
 - (void)loadPalette;
+- (void)loadPaletteDefault;
+- (void)changePalette:(NSString *)palette;
 
 @end
 
@@ -314,146 +326,195 @@ NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];
 
 # pragma mark - Display Mode
 
-- (void)changeDisplayMode
+- (NSArray <NSDictionary <NSString *, id> *> *)displayModes
 {
     if (gb.isCgb())
+        return nil;
+
+    if (_availableDisplayModes.count == 0)
+    {
+        _availableDisplayModes = [NSArray array];
+
+        NSArray <NSDictionary <NSString *, id> *> *availableModesWithDefault =
+        @[
+          Option(@"Internal", @"palette"),
+          Option(@"Grayscale", @"palette"),
+          Option(@"Greenscale", @"palette"),
+          Option(@"Pocket", @"palette"),
+          SeparatorItem(),
+          Label(@"GBC Palettes"),
+          Option(@"Blue", @"palette"),
+          Option(@"Dark Blue", @"palette"),
+          Option(@"Green", @"palette"),
+          Option(@"Dark Green", @"palette"),
+          Option(@"Brown", @"palette"),
+          Option(@"Dark Brown", @"palette"),
+          Option(@"Red", @"palette"),
+          Option(@"Yellow", @"palette"),
+          Option(@"Orange", @"palette"),
+          Option(@"Pastel Mix", @"palette"),
+          Option(@"Inverted", @"palette"),
+//          @{ OEGameCoreDisplayModeGroupNameKey      : @"Test Menu",
+//             OEGameCoreDisplayModeGroupItemsKey     : @[
+//                     OptionToggleable(@"Toggle 1", @"toggle1"),
+//                     OptionToggleable(@"Toggle 2", @"toggle2"),
+//                     SeparatorItem(),
+//                     Label(@"Group 1"),
+//                     OptionIndented(@"Option 1", @"option"),
+//                     OptionIndented(@"Option 2", @"option"),
+//                     SeparatorItem(),
+//                     Label(@"Group 2"),
+//                     OptionIndented(@"Option 3", @"option2"),
+//                     OptionIndented(@"Option 4", @"option2"),
+//                     ]
+//             },
+          ];
+
+        if (![self gameHasInternalPalette])
+            availableModesWithDefault = [availableModesWithDefault subarrayWithRange:NSMakeRange(1, availableModesWithDefault.count - 1)];
+
+        _availableDisplayModes = availableModesWithDefault;
+    }
+
+    return _availableDisplayModes;
+}
+
+- (void)changeDisplayWithMode:(NSString *)displayMode
+{
+    // NOTE: This is a more complex implementation to serve as an example for handling submenus,
+    // toggleable options and multiple groups of mutually exclusive options.
+
+    if (_availableDisplayModes.count == 0)
+        [self displayModes];
+
+    // First check if 'displayMode' is toggleable and grab its preference key
+    BOOL isDisplayModeToggleable, isValidDisplayMode;
+    NSString *displayModePrefKey;
+    for (NSDictionary *modeDict in _availableDisplayModes)
+    {
+        NSString *mode = modeDict[OEGameCoreDisplayModeNameKey];
+        if ([mode isEqualToString:displayMode])
+        {
+            displayModePrefKey = modeDict[OEGameCoreDisplayModePrefKeyNameKey];
+            isDisplayModeToggleable = [modeDict[OEGameCoreDisplayModeAllowsToggleKey] boolValue];
+            isValidDisplayMode = YES;
+            break;
+        }
+        // Submenu Items
+        for (NSDictionary *subModeDict in modeDict[OEGameCoreDisplayModeGroupItemsKey])
+        {
+            NSString *subMode = subModeDict[OEGameCoreDisplayModeNameKey];
+            if ([subMode isEqualToString:displayMode])
+            {
+                displayModePrefKey = subModeDict[OEGameCoreDisplayModePrefKeyNameKey];
+                isDisplayModeToggleable = [subModeDict[OEGameCoreDisplayModeAllowsToggleKey] boolValue];
+                isValidDisplayMode = YES;
+                break;
+            }
+        }
+    }
+
+    // Disallow a 'displayMode' not found in _availableDisplayModes
+    if (!isValidDisplayMode)
         return;
 
-    unsigned short *gbc_bios_palette = NULL;
+    NSMutableArray *tempOptionsArray = [NSMutableArray array];
+    NSMutableArray *tempSubOptionsArray = [NSMutableArray array];
+    NSString *mode, *pref, *label;
+    BOOL isToggleable, isSelected;
+    NSInteger indentationLevel;
 
-    switch (displayMode)
+    // Handle option state changes
+    for (NSDictionary *optionDict in _availableDisplayModes)
     {
-        case 0:
-        {
-            // GB Pea Soup Green
-            gb.setDmgPaletteColor(0, 0, 8369468);
-            gb.setDmgPaletteColor(0, 1, 6728764);
-            gb.setDmgPaletteColor(0, 2, 3629872);
-            gb.setDmgPaletteColor(0, 3, 3223857);
-            gb.setDmgPaletteColor(1, 0, 8369468);
-            gb.setDmgPaletteColor(1, 1, 6728764);
-            gb.setDmgPaletteColor(1, 2, 3629872);
-            gb.setDmgPaletteColor(1, 3, 3223857);
-            gb.setDmgPaletteColor(2, 0, 8369468);
-            gb.setDmgPaletteColor(2, 1, 6728764);
-            gb.setDmgPaletteColor(2, 2, 3629872);
-            gb.setDmgPaletteColor(2, 3, 3223857);
+        mode             =  optionDict[OEGameCoreDisplayModeNameKey];
+        pref             =  optionDict[OEGameCoreDisplayModePrefKeyNameKey];
+        isToggleable     = [optionDict[OEGameCoreDisplayModeAllowsToggleKey] boolValue];
+        isSelected       = [optionDict[OEGameCoreDisplayModeStateKey] boolValue];
+        indentationLevel = [optionDict[OEGameCoreDisplayModeIndentationLevelKey] integerValue] ?: 0;
 
-            displayMode++;
-            return;
+        if (optionDict[OEGameCoreDisplayModeSeparatorItemKey])
+        {
+            [tempOptionsArray addObject:SeparatorItem()];
+            continue;
         }
-
-        case 1:
+        else if (optionDict[OEGameCoreDisplayModeLabelKey])
         {
-            // GB Pocket
-            gb.setDmgPaletteColor(0, 0, 13487791);
-            gb.setDmgPaletteColor(0, 1, 10987158);
-            gb.setDmgPaletteColor(0, 2, 6974033);
-            gb.setDmgPaletteColor(0, 3, 2828823);
-            gb.setDmgPaletteColor(1, 0, 13487791);
-            gb.setDmgPaletteColor(1, 1, 10987158);
-            gb.setDmgPaletteColor(1, 2, 6974033);
-            gb.setDmgPaletteColor(1, 3, 2828823);
-            gb.setDmgPaletteColor(2, 0, 13487791);
-            gb.setDmgPaletteColor(2, 1, 10987158);
-            gb.setDmgPaletteColor(2, 2, 6974033);
-            gb.setDmgPaletteColor(2, 3, 2828823);
-
-            displayMode++;
-            return;
+            label = optionDict[OEGameCoreDisplayModeLabelKey];
+            [tempOptionsArray addObject:Label(label)];
+            continue;
         }
-
-        case 2:
-            gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("GBC - Blue"));
-            displayMode++;
-            break;
-
-        case 3:
-            gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("GBC - Dark Blue"));
-            displayMode++;
-            break;
-
-        case 4:
-            gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("GBC - Green"));
-            displayMode++;
-            break;
-
-        case 5:
-            gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("GBC - Dark Green"));
-            displayMode++;
-            break;
-
-        case 6:
-            gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("GBC - Brown"));
-            displayMode++;
-            break;
-
-        case 7:
-            gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("GBC - Dark Brown"));
-            displayMode++;
-            break;
-
-        case 8:
-            gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("GBC - Red"));
-            displayMode++;
-            break;
-
-        case 9:
-            gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("GBC - Yellow"));
-            displayMode++;
-            break;
-
-        case 10:
-            gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("GBC - Orange"));
-            displayMode++;
-            break;
-
-        case 11:
-            gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("GBC - Pastel Mix"));
-            displayMode++;
-            break;
-
-        case 12:
-            gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("GBC - Inverted"));
-            displayMode++;
-            break;
-
-        case 13:
+        // Mutually exclusive option state change
+        else if ([mode isEqualToString:displayMode] && !isToggleable)
+            isSelected = YES;
+        // Reset mutually exclusive options that are the same prefs group as 'displayMode'
+        else if (!isDisplayModeToggleable && [pref isEqualToString:displayModePrefKey])
+            isSelected = NO;
+        // Toggleable option state change
+        else if ([mode isEqualToString:displayMode] && isToggleable)
+            isSelected = !isSelected;
+        // Submenu group
+        else if (optionDict[OEGameCoreDisplayModeGroupNameKey])
         {
-            std::string str = gb.romTitle(); // read ROM internal title
-            const char *internal_game_name = str.c_str();
-            gbc_bios_palette = const_cast<unsigned short *>(findGbcTitlePal(internal_game_name));
-
-            if (gbc_bios_palette == 0)
+            NSString *submenuTitle = optionDict[OEGameCoreDisplayModeGroupNameKey];
+            // Submenu items
+            for (NSDictionary *subOptionDict in optionDict[OEGameCoreDisplayModeGroupItemsKey])
             {
-                gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("GBC - Grayscale"));
-                displayMode = 0;
+                mode             =  subOptionDict[OEGameCoreDisplayModeNameKey];
+                pref             =  subOptionDict[OEGameCoreDisplayModePrefKeyNameKey];
+                isToggleable     = [subOptionDict[OEGameCoreDisplayModeAllowsToggleKey] boolValue];
+                isSelected       = [subOptionDict[OEGameCoreDisplayModeStateKey] boolValue];
+                indentationLevel = [subOptionDict[OEGameCoreDisplayModeIndentationLevelKey] integerValue] ?: 0;
+
+                if (subOptionDict[OEGameCoreDisplayModeSeparatorItemKey])
+                {
+                    [tempSubOptionsArray addObject:SeparatorItem()];
+                    continue;
+                }
+                else if (subOptionDict[OEGameCoreDisplayModeLabelKey])
+                {
+                    label = subOptionDict[OEGameCoreDisplayModeLabelKey];
+                    [tempSubOptionsArray addObject:Label(label)];
+                    continue;
+                }
+                // Mutually exclusive option state change
+                else if ([mode isEqualToString:displayMode] && !isToggleable)
+                    isSelected = YES;
+                // Reset mutually exclusive options that are the same prefs group as 'displayMode'
+                else if (!isDisplayModeToggleable && [pref isEqualToString:displayModePrefKey])
+                    isSelected = NO;
+                // Toggleable option state change
+                else if ([mode isEqualToString:displayMode] && isToggleable)
+                    isSelected = !isSelected;
+
+                // Add the submenu option
+                [tempSubOptionsArray addObject:@{ OEGameCoreDisplayModeNameKey             : mode,
+                                                  OEGameCoreDisplayModePrefKeyNameKey      : pref,
+                                                  OEGameCoreDisplayModeStateKey            : @(isSelected),
+                                                  OEGameCoreDisplayModeIndentationLevelKey : @(indentationLevel),
+                                                  OEGameCoreDisplayModeAllowsToggleKey     : @(isToggleable) }];
             }
-            else
-                displayMode++;
+            // Add the submenu group
+            [tempOptionsArray addObject:@{ OEGameCoreDisplayModeGroupNameKey  : submenuTitle,
+                                           OEGameCoreDisplayModeGroupItemsKey : [tempSubOptionsArray copy] }];
+            [tempSubOptionsArray removeAllObjects];
 
-            break;
+            continue;
         }
 
-        case 14:
-            gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("GBC - Grayscale"));
-            displayMode = 0;
-            break;
-
-        default:
-            return;
-            break;
+        // Add the option
+        [tempOptionsArray addObject:@{ OEGameCoreDisplayModeNameKey             : mode,
+                                       OEGameCoreDisplayModePrefKeyNameKey      : pref,
+                                       OEGameCoreDisplayModeStateKey            : @(isSelected),
+                                       OEGameCoreDisplayModeIndentationLevelKey : @(indentationLevel),
+                                       OEGameCoreDisplayModeAllowsToggleKey     : @(isToggleable) }];
     }
 
-    unsigned rgb32 = 0;
-    for (unsigned palnum = 0; palnum < 3; ++palnum)
-    {
-        for (unsigned colornum = 0; colornum < 4; ++colornum)
-        {
-            rgb32 = gbcToRgb32(gbc_bios_palette[palnum * 4 + colornum]);
-            gb.setDmgPaletteColor(palnum, colornum, rgb32);
-        }
-    }
+    // Set the new palette
+    if ([displayModePrefKey isEqualToString:@"palette"])
+        [self changePalette:displayMode];
+
+    _availableDisplayModes = tempOptionsArray;
 }
 
 # pragma mark - Misc Helper Methods
@@ -478,22 +539,134 @@ NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];
         gb.setGameShark(s);
 }
 
+- (NSString *)gameInternalName
+{
+    NSString *title = [NSString stringWithUTF8String:gb.romTitle().c_str()];
+    return title;
+}
+
+- (BOOL)gameHasInternalPalette
+{
+    unsigned short *gbc_bios_palette = NULL;
+    NSString *title = [self gameInternalName];
+    gbc_bios_palette = const_cast<unsigned short *>(findGbcTitlePal(title.UTF8String));
+
+    return gbc_bios_palette != 0 ? YES : NO;
+}
+
 - (void)loadPalette
 {
-    std::string str = gb.romTitle(); // read ROM internal title
-    const char *internal_game_name = str.c_str();
-
-    // load a GBC BIOS builtin palette
-    unsigned short *gbc_bios_palette = NULL;
-    gbc_bios_palette = const_cast<unsigned short *>(findGbcTitlePal(internal_game_name));
-
-    if (gbc_bios_palette == 0)
+    // Only temporary, so core doesn't crash on an older OpenEmu version
+    if (![self respondsToSelector:@selector(displayModeInfo)])
     {
-        // no custom palette found, load the default (Original Grayscale)
-        gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("GBC - Grayscale"));
+        [self loadPaletteDefault];
     }
+    // No previous palette saved, set a default
+    else if (self.displayModeInfo[@"palette"] == nil)
+    {
+        [self loadPaletteDefault];
+    }
+    else
+    {
+        NSString *lastPalette = self.displayModeInfo[@"palette"];
+        // Don't try to load "Internal" palette for a game without one
+        if ([lastPalette isEqualToString:@"Internal"] && ![self gameHasInternalPalette])
+            [self changeDisplayWithMode:@"Grayscale"];
+        else
+            [self changeDisplayWithMode:lastPalette];
+    }
+}
 
-    unsigned rgb32 = 0;
+- (void)loadPaletteDefault
+{
+    if ([self gameHasInternalPalette])
+        // load a GBC BIOS builtin palette
+        [self changeDisplayWithMode:@"Internal"];
+    else
+        // no custom palette found, load the default (Original Grayscale)
+        [self changeDisplayWithMode:@"Grayscale"];
+}
+
+- (void)changePalette:(NSString *)palette
+{
+    NSDictionary <NSString *, NSString *> *paletteNames =
+    @{
+      @"Internal"   : @"Internal",
+      @"Grayscale"  : @"GBC - Grayscale",
+      @"Greenscale" : @"Greenscale",
+      @"Pocket"     : @"Pocket",
+      @"Blue"       : @"GBC - Blue",
+      @"Dark Blue"  : @"GBC - Dark Blue",
+      @"Green"      : @"GBC - Green",
+      @"Dark Green" : @"GBC - Dark Green",
+      @"Brown"      : @"GBC - Brown",
+      @"Dark Brown" : @"GBC - Dark Brown",
+      @"Red"        : @"GBC - Red",
+      @"Yellow"     : @"GBC - Yellow",
+      @"Orange"     : @"GBC - Orange",
+      @"Pastel Mix" : @"GBC - Pastel Mix",
+      @"Inverted"   : @"GBC - Inverted",
+      };
+
+    palette = paletteNames[palette];
+    unsigned short *gbc_bios_palette = NULL;
+
+    if ([palette isEqualToString:@"Internal"])
+    {
+        NSString *title = [self gameInternalName];
+        gbc_bios_palette = const_cast<unsigned short *>(findGbcTitlePal(title.UTF8String));
+    }
+    else if ([palette isEqualToString:@"Greenscale"])
+    {
+        // GB Pea Soup Green
+        gb.setDmgPaletteColor(0, 0, 8369468);
+        gb.setDmgPaletteColor(0, 1, 6728764);
+        gb.setDmgPaletteColor(0, 2, 3629872);
+        gb.setDmgPaletteColor(0, 3, 3223857);
+        gb.setDmgPaletteColor(1, 0, 8369468);
+        gb.setDmgPaletteColor(1, 1, 6728764);
+        gb.setDmgPaletteColor(1, 2, 3629872);
+        gb.setDmgPaletteColor(1, 3, 3223857);
+        gb.setDmgPaletteColor(2, 0, 8369468);
+        gb.setDmgPaletteColor(2, 1, 6728764);
+        gb.setDmgPaletteColor(2, 2, 3629872);
+        gb.setDmgPaletteColor(2, 3, 3223857);
+        return;
+    }
+    else if ([palette isEqualToString:@"Pocket"])
+    {
+        // GB Pocket
+        gb.setDmgPaletteColor(0, 0, 13487791);
+        gb.setDmgPaletteColor(0, 1, 10987158);
+        gb.setDmgPaletteColor(0, 2, 6974033);
+        gb.setDmgPaletteColor(0, 3, 2828823);
+        gb.setDmgPaletteColor(1, 0, 13487791);
+        gb.setDmgPaletteColor(1, 1, 10987158);
+        gb.setDmgPaletteColor(1, 2, 6974033);
+        gb.setDmgPaletteColor(1, 3, 2828823);
+        gb.setDmgPaletteColor(2, 0, 13487791);
+        gb.setDmgPaletteColor(2, 1, 10987158);
+        gb.setDmgPaletteColor(2, 2, 6974033);
+        gb.setDmgPaletteColor(2, 3, 2828823);
+
+//        gb.setDmgPaletteColor(0, 0, 13029285);
+//        gb.setDmgPaletteColor(0, 1, 9213547);
+//        gb.setDmgPaletteColor(0, 2, 4870457);
+//        gb.setDmgPaletteColor(0, 3, 1580056);
+//        gb.setDmgPaletteColor(1, 0, 13029285);
+//        gb.setDmgPaletteColor(1, 1, 9213547);
+//        gb.setDmgPaletteColor(1, 2, 4870457);
+//        gb.setDmgPaletteColor(1, 3, 1580056);
+//        gb.setDmgPaletteColor(2, 0, 13029285);
+//        gb.setDmgPaletteColor(2, 1, 9213547);
+//        gb.setDmgPaletteColor(2, 2, 4870457);
+//        gb.setDmgPaletteColor(2, 3, 1580056);
+        return;
+    }
+    else
+        gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal(palette.UTF8String));
+
+    unsigned long rgb32 = 0;
     for (unsigned palnum = 0; palnum < 3; ++palnum)
     {
         for (unsigned colornum = 0; colornum < 4; ++colornum)
