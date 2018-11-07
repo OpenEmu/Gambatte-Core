@@ -39,7 +39,7 @@
 #define OptionIndented(_NAME_, _PREFKEY_) @{ OEGameCoreDisplayModeNameKey : _NAME_, OEGameCoreDisplayModePrefKeyNameKey : _PREFKEY_, OEGameCoreDisplayModeStateKey : @NO, OEGameCoreDisplayModeIndentationLevelKey : @(1), }
 #define OptionToggleable(_NAME_, _PREFKEY_) @{ OEGameCoreDisplayModeNameKey : _NAME_, OEGameCoreDisplayModePrefKeyNameKey : _PREFKEY_, OEGameCoreDisplayModeStateKey : @NO, OEGameCoreDisplayModeAllowsToggleKey : @YES, }
 #define Label(_NAME_) @{ OEGameCoreDisplayModeLabelKey : _NAME_, }
-#define SeparatorItem() @{ OEGameCoreDisplayModeSeparatorItemKey : [NSNull null],}
+#define SeparatorItem() @{ OEGameCoreDisplayModeSeparatorItemKey : @"",}
 
 gambatte::GB gb;
 Resampler *resampler;
@@ -56,12 +56,11 @@ public:
 
 @interface GBGameCore () <OEGBSystemResponderClient>
 {
-    uint32_t *videoBuffer;
-    uint32_t *inSoundBuffer;
-    int16_t *outSoundBuffer;
-    double sampleRate;
-    int displayMode;
-    NSArray *_availableDisplayModes;
+    uint32_t *_videoBuffer;
+    uint32_t *_inSoundBuffer;
+    int16_t *_outSoundBuffer;
+    double _sampleRate;
+    NSMutableArray <NSMutableDictionary <NSString *, id> *> *_availableDisplayModes;
 }
 
 - (void)applyCheat:(NSString *)code;
@@ -80,9 +79,8 @@ public:
 {
     if((self = [super init]))
     {
-        inSoundBuffer = (uint32_t *)malloc(2064 * 2 * 4);
-        outSoundBuffer = (int16_t *)malloc(2064 * 2 * 2);
-        displayMode = 0;
+        _inSoundBuffer = (uint32_t *)malloc(2064 * 2 * 4);
+        _outSoundBuffer = (int16_t *)malloc(2064 * 2 * 2);
     }
 
 	return self;
@@ -90,9 +88,9 @@ public:
 
 - (void)dealloc
 {
-    free(videoBuffer);
-    free(inSoundBuffer);
-    free(outSoundBuffer);
+    free(_videoBuffer);
+    free(_inSoundBuffer);
+    free(_outSoundBuffer);
 }
 
 # pragma mark - Execution
@@ -102,9 +100,9 @@ public:
     memset(pad, 0, sizeof(uint32_t) * OEGBButtonCount);
 
     // Set battery save dir
-    NSURL *batterySavesDirectory = [NSURL fileURLWithPath:[self batterySavesDirectoryPath]];
+    NSURL *batterySavesDirectory = [NSURL fileURLWithPath:self.batterySavesDirectoryPath];
     [[NSFileManager defaultManager] createDirectoryAtURL:batterySavesDirectory withIntermediateDirectories:YES attributes:nil error:nil];
-    gb.setSaveDir(batterySavesDirectory.path.fileSystemRepresentation);
+    gb.setSaveDir(batterySavesDirectory.fileSystemRepresentation);
 
     // Set input state callback
     gb.setInputGetter(&GetInput);
@@ -120,7 +118,7 @@ public:
     resampler->exactRatio(mul, div);
 
     double outSampleRate = inSampleRate * mul / div;
-    sampleRate = outSampleRate; // 47994.326636
+    _sampleRate = outSampleRate; // 47994.326636
 
     if (gb.load(path.fileSystemRepresentation) != 0)
         return NO;
@@ -136,7 +134,7 @@ public:
 {
     size_t samples = 2064;
 
-    while (gb.runFor(videoBuffer, 160, inSoundBuffer, samples) == -1)
+    while (gb.runFor(_videoBuffer, 160, _inSoundBuffer, samples) == -1)
         [self outputAudio:samples];
 
     [self outputAudio:samples];
@@ -166,10 +164,10 @@ public:
 - (const void *)getVideoBufferWithHint:(void *)hint
 {
     if (!hint) {
-        if (!videoBuffer) videoBuffer = (uint32_t *)malloc(160 * 144 * 4);
-        hint = videoBuffer;
+        if (!_videoBuffer) _videoBuffer = (uint32_t *)malloc(160 * 144 * 4);
+        hint = _videoBuffer;
     }
-    return videoBuffer = (uint32_t*)hint;
+    return _videoBuffer = (uint32_t*)hint;
 }
 
 - (OEIntRect)screenRect
@@ -201,7 +199,7 @@ public:
 
 - (double)audioSampleRate
 {
-    return sampleRate;
+    return _sampleRate;
 }
 
 - (NSUInteger)channelCount
@@ -333,7 +331,7 @@ NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];
 
     if (_availableDisplayModes.count == 0)
     {
-        _availableDisplayModes = [NSArray array];
+        _availableDisplayModes = [NSMutableArray array];
 
         NSArray <NSDictionary <NSString *, id> *> *availableModesWithDefault =
         @[
@@ -370,13 +368,14 @@ NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];
 //             },
           ];
 
-        if (![self gameHasInternalPalette])
-            availableModesWithDefault = [availableModesWithDefault subarrayWithRange:NSMakeRange(1, availableModesWithDefault.count - 1)];
+        // Deep mutable copy
+        _availableDisplayModes = (NSMutableArray *)CFBridgingRelease(CFPropertyListCreateDeepCopy(kCFAllocatorDefault, (CFArrayRef)availableModesWithDefault, kCFPropertyListMutableContainers));
 
-        _availableDisplayModes = availableModesWithDefault;
+        if (![self gameHasInternalPalette])
+            [_availableDisplayModes removeObjectAtIndex:0];
     }
 
-    return _availableDisplayModes;
+    return [_availableDisplayModes copy];
 }
 
 - (void)changeDisplayWithMode:(NSString *)displayMode
@@ -390,6 +389,7 @@ NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];
     // First check if 'displayMode' is toggleable and grab its preference key
     BOOL isDisplayModeToggleable, isValidDisplayMode;
     NSString *displayModePrefKey;
+
     for (NSDictionary *modeDict in _availableDisplayModes)
     {
         NSString *mode = modeDict[OEGameCoreDisplayModeNameKey];
@@ -418,103 +418,59 @@ NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];
     if (!isValidDisplayMode)
         return;
 
-    NSMutableArray *tempOptionsArray = [NSMutableArray array];
-    NSMutableArray *tempSubOptionsArray = [NSMutableArray array];
-    NSString *mode, *pref, *label;
-    BOOL isToggleable, isSelected;
-    NSInteger indentationLevel;
-
     // Handle option state changes
-    for (NSDictionary *optionDict in _availableDisplayModes)
+    NSString *modeName, *prefKey;
+    BOOL isToggleable, isSelected;
+
+    for (NSMutableDictionary *optionDict in _availableDisplayModes)
     {
-        mode             =  optionDict[OEGameCoreDisplayModeNameKey];
-        pref             =  optionDict[OEGameCoreDisplayModePrefKeyNameKey];
+        modeName         =  optionDict[OEGameCoreDisplayModeNameKey];
+        prefKey          =  optionDict[OEGameCoreDisplayModePrefKeyNameKey];
         isToggleable     = [optionDict[OEGameCoreDisplayModeAllowsToggleKey] boolValue];
         isSelected       = [optionDict[OEGameCoreDisplayModeStateKey] boolValue];
-        indentationLevel = [optionDict[OEGameCoreDisplayModeIndentationLevelKey] integerValue] ?: 0;
 
-        if (optionDict[OEGameCoreDisplayModeSeparatorItemKey])
-        {
-            [tempOptionsArray addObject:SeparatorItem()];
+        if (optionDict[OEGameCoreDisplayModeSeparatorItemKey] || optionDict[OEGameCoreDisplayModeLabelKey])
             continue;
-        }
-        else if (optionDict[OEGameCoreDisplayModeLabelKey])
-        {
-            label = optionDict[OEGameCoreDisplayModeLabelKey];
-            [tempOptionsArray addObject:Label(label)];
-            continue;
-        }
         // Mutually exclusive option state change
-        else if ([mode isEqualToString:displayMode] && !isToggleable)
-            isSelected = YES;
+        else if ([modeName isEqualToString:displayMode] && !isToggleable)
+            optionDict[OEGameCoreDisplayModeStateKey] = @YES;
         // Reset mutually exclusive options that are the same prefs group as 'displayMode'
-        else if (!isDisplayModeToggleable && [pref isEqualToString:displayModePrefKey])
-            isSelected = NO;
+        else if (!isDisplayModeToggleable && [prefKey isEqualToString:displayModePrefKey])
+            optionDict[OEGameCoreDisplayModeStateKey] = @NO;
         // Toggleable option state change
-        else if ([mode isEqualToString:displayMode] && isToggleable)
-            isSelected = !isSelected;
+        else if ([modeName isEqualToString:displayMode] && isToggleable)
+            optionDict[OEGameCoreDisplayModeStateKey] = @(!isSelected);
         // Submenu group
         else if (optionDict[OEGameCoreDisplayModeGroupNameKey])
         {
-            NSString *submenuTitle = optionDict[OEGameCoreDisplayModeGroupNameKey];
             // Submenu items
-            for (NSDictionary *subOptionDict in optionDict[OEGameCoreDisplayModeGroupItemsKey])
+            for (NSMutableDictionary *subOptionDict in optionDict[OEGameCoreDisplayModeGroupItemsKey])
             {
-                mode             =  subOptionDict[OEGameCoreDisplayModeNameKey];
-                pref             =  subOptionDict[OEGameCoreDisplayModePrefKeyNameKey];
+                modeName         =  subOptionDict[OEGameCoreDisplayModeNameKey];
+                prefKey          =  subOptionDict[OEGameCoreDisplayModePrefKeyNameKey];
                 isToggleable     = [subOptionDict[OEGameCoreDisplayModeAllowsToggleKey] boolValue];
                 isSelected       = [subOptionDict[OEGameCoreDisplayModeStateKey] boolValue];
-                indentationLevel = [subOptionDict[OEGameCoreDisplayModeIndentationLevelKey] integerValue] ?: 0;
 
-                if (subOptionDict[OEGameCoreDisplayModeSeparatorItemKey])
-                {
-                    [tempSubOptionsArray addObject:SeparatorItem()];
+                if (subOptionDict[OEGameCoreDisplayModeSeparatorItemKey] || subOptionDict[OEGameCoreDisplayModeLabelKey])
                     continue;
-                }
-                else if (subOptionDict[OEGameCoreDisplayModeLabelKey])
-                {
-                    label = subOptionDict[OEGameCoreDisplayModeLabelKey];
-                    [tempSubOptionsArray addObject:Label(label)];
-                    continue;
-                }
                 // Mutually exclusive option state change
-                else if ([mode isEqualToString:displayMode] && !isToggleable)
-                    isSelected = YES;
+                else if ([modeName isEqualToString:displayMode] && !isToggleable)
+                    subOptionDict[OEGameCoreDisplayModeStateKey] = @YES;
                 // Reset mutually exclusive options that are the same prefs group as 'displayMode'
-                else if (!isDisplayModeToggleable && [pref isEqualToString:displayModePrefKey])
-                    isSelected = NO;
+                else if (!isDisplayModeToggleable && [prefKey isEqualToString:displayModePrefKey])
+                    subOptionDict[OEGameCoreDisplayModeStateKey] = @NO;
                 // Toggleable option state change
-                else if ([mode isEqualToString:displayMode] && isToggleable)
-                    isSelected = !isSelected;
-
-                // Add the submenu option
-                [tempSubOptionsArray addObject:@{ OEGameCoreDisplayModeNameKey             : mode,
-                                                  OEGameCoreDisplayModePrefKeyNameKey      : pref,
-                                                  OEGameCoreDisplayModeStateKey            : @(isSelected),
-                                                  OEGameCoreDisplayModeIndentationLevelKey : @(indentationLevel),
-                                                  OEGameCoreDisplayModeAllowsToggleKey     : @(isToggleable) }];
+                else if ([modeName isEqualToString:displayMode] && isToggleable)
+                    subOptionDict[OEGameCoreDisplayModeStateKey] = @(!isSelected);
             }
-            // Add the submenu group
-            [tempOptionsArray addObject:@{ OEGameCoreDisplayModeGroupNameKey  : submenuTitle,
-                                           OEGameCoreDisplayModeGroupItemsKey : [tempSubOptionsArray copy] }];
-            [tempSubOptionsArray removeAllObjects];
 
             continue;
         }
-
-        // Add the option
-        [tempOptionsArray addObject:@{ OEGameCoreDisplayModeNameKey             : mode,
-                                       OEGameCoreDisplayModePrefKeyNameKey      : pref,
-                                       OEGameCoreDisplayModeStateKey            : @(isSelected),
-                                       OEGameCoreDisplayModeIndentationLevelKey : @(indentationLevel),
-                                       OEGameCoreDisplayModeAllowsToggleKey     : @(isToggleable) }];
     }
 
     // Set the new palette
     if ([displayModePrefKey isEqualToString:@"palette"])
         [self changePalette:displayMode];
-
-    _availableDisplayModes = tempOptionsArray;
 }
 
 # pragma mark - Misc Helper Methods
@@ -524,10 +480,10 @@ NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];
     if (!frames)
         return;
 
-    size_t len = resampler->resample(outSoundBuffer, reinterpret_cast<const int16_t *>(inSoundBuffer), frames);
+    size_t len = resampler->resample(_outSoundBuffer, reinterpret_cast<const int16_t *>(_inSoundBuffer), frames);
 
     if (len)
-        [[self ringBufferAtIndex:0] write:outSoundBuffer maxLength:len << 2];
+        [[self ringBufferAtIndex:0] write:_outSoundBuffer maxLength:len << 2];
 }
 
 - (void)applyCheat:(NSString *)code
