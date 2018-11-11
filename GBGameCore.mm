@@ -60,6 +60,7 @@ public:
     uint32_t *_inSoundBuffer;
     int16_t *_outSoundBuffer;
     double _sampleRate;
+    NSMutableDictionary <NSString *, NSNumber *> *_cheatList;
     NSMutableArray <NSMutableDictionary <NSString *, id> *> *_availableDisplayModes;
 }
 
@@ -81,6 +82,7 @@ public:
     {
         _inSoundBuffer = (uint32_t *)malloc(2064 * 2 * 4);
         _outSoundBuffer = (int16_t *)malloc(2064 * 2 * 2);
+        _cheatList = [NSMutableDictionary dictionary];
     }
 
 	return self;
@@ -224,15 +226,15 @@ public:
 - (NSData *)serializeStateWithError:(NSError **)outError
 {
     std::stringstream stream(std::ios::in|std::ios::out|std::ios::binary);
-    
+
     if(gb.serializeState(stream)) {
         stream.seekg(0, std::ios::end);
         NSUInteger length = stream.tellg();
         stream.seekg(0, std::ios::beg);
-        
+
         char *bytes = (char *)malloc(length);
         stream.read(bytes, length);
-        
+
         return [NSData dataWithBytesNoCopy:bytes length:length];
     }
 
@@ -242,18 +244,18 @@ public:
             NSLocalizedRecoverySuggestionErrorKey : @"The emulator could not write the state data."
         }];
     }
-    
+
     return nil;
 }
 
 - (BOOL)deserializeState:(NSData *)state withError:(NSError **)outError
 {
     std::stringstream stream(std::ios::in|std::ios::out|std::ios::binary);
-    
+
     char const *bytes = (char const *)([state bytes]);
     std::streamsize size = [state length];
     stream.write(bytes, size);
-    
+
     if(gb.deserializeState(stream))
         return YES;
 
@@ -281,45 +283,43 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
 
 #pragma mark - Cheats
 
-NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];
-
 - (void)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled
 {
     // Sanitize
-    code = [code stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    code = [code stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet];
 
     // Gambatte expects cheats UPPERCASE
-    code = [code uppercaseString];
+    code = code.uppercaseString;
 
     // Remove any spaces
     code = [code stringByReplacingOccurrencesOfString:@" " withString:@""];
 
     if (enabled)
-        [cheatList setValue:@YES forKey:code];
+        _cheatList[code] = @YES;
     else
-        [cheatList removeObjectForKey:code];
+        [_cheatList removeObjectForKey:code];
 
-    NSMutableArray *combinedGameSharkCodes = [[NSMutableArray alloc] init];
-    NSMutableArray *combinedGameGenieCodes = [[NSMutableArray alloc] init];
+    NSMutableArray <NSString *> *combinedGameSharkCodes = [NSMutableArray array];
+    NSMutableArray <NSString *> *combinedGameGenieCodes = [NSMutableArray array];
 
     // Gambatte expects all cheats in one combined string per-type e.g. 01xxxxxx+01xxxxxx
     // Add enabled per-type cheats to arrays and later join them all by a '+' separator
-    for (id key in cheatList)
+    for (NSString *key in _cheatList)
     {
-        if ([[cheatList valueForKey:key] isEqual:@YES])
+        if ([_cheatList[key] boolValue])
         {
             // GameShark
-            if ([key rangeOfString:@"-"].location == NSNotFound)
+            if (![key containsString:@"-"])
                 [combinedGameSharkCodes addObject:key];
             // Game Genie
-            else if ([key rangeOfString:@"-"].location != NSNotFound)
+            else if ([key containsString:@"-"])
                 [combinedGameGenieCodes addObject:key];
         }
     }
 
     // Apply combined cheats or force a final reset if all cheats are disabled
-    [self applyCheat:[combinedGameSharkCodes count] != 0 ? [combinedGameSharkCodes componentsJoinedByString:@"+"] : @"0"];
-    [self applyCheat:[combinedGameGenieCodes count] != 0 ? [combinedGameGenieCodes componentsJoinedByString:@"+"] : @"0-"];
+    [self applyCheat:combinedGameSharkCodes.count != 0 ? [combinedGameSharkCodes componentsJoinedByString:@"+"] : @"0"];
+    [self applyCheat:combinedGameGenieCodes.count != 0 ? [combinedGameGenieCodes componentsJoinedByString:@"+"] : @"0-"];
 }
 
 # pragma mark - Display Mode
@@ -387,7 +387,8 @@ NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];
         [self displayModes];
 
     // First check if 'displayMode' is toggleable and grab its preference key
-    BOOL isDisplayModeToggleable, isValidDisplayMode;
+    BOOL isDisplayModeToggleable = NO;
+    BOOL isValidDisplayMode = NO;
     NSString *displayModePrefKey;
 
     for (NSDictionary *modeDict in _availableDisplayModes)
