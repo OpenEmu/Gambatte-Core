@@ -35,9 +35,11 @@
 #include "resamplerinfo.h"
 #include "resampler.h"
 
+#define OptionDefault(_NAME_, _PREFKEY_) @{ OEGameCoreDisplayModeNameKey : _NAME_, OEGameCoreDisplayModePrefKeyNameKey : _PREFKEY_, OEGameCoreDisplayModeStateKey : @YES, }
 #define Option(_NAME_, _PREFKEY_) @{ OEGameCoreDisplayModeNameKey : _NAME_, OEGameCoreDisplayModePrefKeyNameKey : _PREFKEY_, OEGameCoreDisplayModeStateKey : @NO, }
 #define OptionIndented(_NAME_, _PREFKEY_) @{ OEGameCoreDisplayModeNameKey : _NAME_, OEGameCoreDisplayModePrefKeyNameKey : _PREFKEY_, OEGameCoreDisplayModeStateKey : @NO, OEGameCoreDisplayModeIndentationLevelKey : @(1), }
 #define OptionToggleable(_NAME_, _PREFKEY_) @{ OEGameCoreDisplayModeNameKey : _NAME_, OEGameCoreDisplayModePrefKeyNameKey : _PREFKEY_, OEGameCoreDisplayModeStateKey : @NO, OEGameCoreDisplayModeAllowsToggleKey : @YES, }
+#define OptionToggleableNoSave(_NAME_, _PREFKEY_) @{ OEGameCoreDisplayModeNameKey : _NAME_, OEGameCoreDisplayModePrefKeyNameKey : _PREFKEY_, OEGameCoreDisplayModeStateKey : @NO, OEGameCoreDisplayModeAllowsToggleKey : @YES, OEGameCoreDisplayModeDisallowPrefSaveKey : @YES, }
 #define Label(_NAME_) @{ OEGameCoreDisplayModeLabelKey : _NAME_, }
 #define SeparatorItem() @{ OEGameCoreDisplayModeSeparatorItemKey : @"",}
 
@@ -252,8 +254,8 @@ public:
 {
     std::stringstream stream(std::ios::in|std::ios::out|std::ios::binary);
 
-    char const *bytes = (char const *)([state bytes]);
-    std::streamsize size = [state length];
+    char const *bytes = (char const *)(state.bytes);
+    std::streamsize size = state.length;
     stream.write(bytes, size);
 
     if(gb.deserializeState(stream))
@@ -389,13 +391,14 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
     // First check if 'displayMode' is toggleable and grab its preference key
     BOOL isDisplayModeToggleable = NO;
     BOOL isValidDisplayMode = NO;
+    BOOL displayModeState = NO;
     NSString *displayModePrefKey;
 
     for (NSDictionary *modeDict in _availableDisplayModes)
     {
-        NSString *mode = modeDict[OEGameCoreDisplayModeNameKey];
-        if ([mode isEqualToString:displayMode])
+        if ([modeDict[OEGameCoreDisplayModeNameKey] isEqualToString:displayMode])
         {
+            displayModeState = [modeDict[OEGameCoreDisplayModeStateKey] boolValue];
             displayModePrefKey = modeDict[OEGameCoreDisplayModePrefKeyNameKey];
             isDisplayModeToggleable = [modeDict[OEGameCoreDisplayModeAllowsToggleKey] boolValue];
             isValidDisplayMode = YES;
@@ -404,9 +407,9 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
         // Submenu Items
         for (NSDictionary *subModeDict in modeDict[OEGameCoreDisplayModeGroupItemsKey])
         {
-            NSString *subMode = subModeDict[OEGameCoreDisplayModeNameKey];
-            if ([subMode isEqualToString:displayMode])
+            if ([subModeDict[OEGameCoreDisplayModeNameKey] isEqualToString:displayMode])
             {
+                displayModeState = [subModeDict[OEGameCoreDisplayModeStateKey] boolValue];
                 displayModePrefKey = subModeDict[OEGameCoreDisplayModePrefKeyNameKey];
                 isDisplayModeToggleable = [subModeDict[OEGameCoreDisplayModeAllowsToggleKey] boolValue];
                 isValidDisplayMode = YES;
@@ -420,49 +423,42 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
         return;
 
     // Handle option state changes
-    NSString *modeName, *prefKey;
-    BOOL isToggleable, isSelected;
-
     for (NSMutableDictionary *optionDict in _availableDisplayModes)
     {
-        modeName         =  optionDict[OEGameCoreDisplayModeNameKey];
-        prefKey          =  optionDict[OEGameCoreDisplayModePrefKeyNameKey];
-        isToggleable     = [optionDict[OEGameCoreDisplayModeAllowsToggleKey] boolValue];
-        isSelected       = [optionDict[OEGameCoreDisplayModeStateKey] boolValue];
+        NSString *modeName = optionDict[OEGameCoreDisplayModeNameKey];
+        NSString *prefKey  = optionDict[OEGameCoreDisplayModePrefKeyNameKey];
 
-        if (optionDict[OEGameCoreDisplayModeSeparatorItemKey] || optionDict[OEGameCoreDisplayModeLabelKey])
+        if (!modeName && !optionDict[OEGameCoreDisplayModeGroupNameKey])
             continue;
         // Mutually exclusive option state change
-        else if ([modeName isEqualToString:displayMode] && !isToggleable)
+        else if ([modeName isEqualToString:displayMode] && !isDisplayModeToggleable)
             optionDict[OEGameCoreDisplayModeStateKey] = @YES;
         // Reset mutually exclusive options that are the same prefs group as 'displayMode'
         else if (!isDisplayModeToggleable && [prefKey isEqualToString:displayModePrefKey])
             optionDict[OEGameCoreDisplayModeStateKey] = @NO;
         // Toggleable option state change
-        else if ([modeName isEqualToString:displayMode] && isToggleable)
-            optionDict[OEGameCoreDisplayModeStateKey] = @(!isSelected);
+        else if ([modeName isEqualToString:displayMode] && isDisplayModeToggleable)
+            optionDict[OEGameCoreDisplayModeStateKey] = @(!displayModeState);
         // Submenu group
         else if (optionDict[OEGameCoreDisplayModeGroupNameKey])
         {
             // Submenu items
             for (NSMutableDictionary *subOptionDict in optionDict[OEGameCoreDisplayModeGroupItemsKey])
             {
-                modeName         =  subOptionDict[OEGameCoreDisplayModeNameKey];
-                prefKey          =  subOptionDict[OEGameCoreDisplayModePrefKeyNameKey];
-                isToggleable     = [subOptionDict[OEGameCoreDisplayModeAllowsToggleKey] boolValue];
-                isSelected       = [subOptionDict[OEGameCoreDisplayModeStateKey] boolValue];
+                NSString *modeName = subOptionDict[OEGameCoreDisplayModeNameKey];
+                NSString *prefKey  = subOptionDict[OEGameCoreDisplayModePrefKeyNameKey];
 
-                if (subOptionDict[OEGameCoreDisplayModeSeparatorItemKey] || subOptionDict[OEGameCoreDisplayModeLabelKey])
+                if (!modeName)
                     continue;
                 // Mutually exclusive option state change
-                else if ([modeName isEqualToString:displayMode] && !isToggleable)
+                else if ([modeName isEqualToString:displayMode] && !isDisplayModeToggleable)
                     subOptionDict[OEGameCoreDisplayModeStateKey] = @YES;
                 // Reset mutually exclusive options that are the same prefs group as 'displayMode'
                 else if (!isDisplayModeToggleable && [prefKey isEqualToString:displayModePrefKey])
                     subOptionDict[OEGameCoreDisplayModeStateKey] = @NO;
                 // Toggleable option state change
-                else if ([modeName isEqualToString:displayMode] && isToggleable)
-                    subOptionDict[OEGameCoreDisplayModeStateKey] = @(!isSelected);
+                else if ([modeName isEqualToString:displayMode] && isDisplayModeToggleable)
+                    subOptionDict[OEGameCoreDisplayModeStateKey] = @(!displayModeState);
             }
 
             continue;
