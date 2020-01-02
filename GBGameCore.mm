@@ -351,8 +351,12 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
           Option(@"Game Boy Light", @"palette"),
           SeparatorItem(),
           Label(@"Monochrome Palettes"),
-          Option(@"DMG Greenscale", @"palette"),
-          Option(@"SGB Grayscale", @"palette")
+          Option(@"Greenscale", @"palette"),
+          Option(@"SGB Grayscale", @"palette"),
+          SeparatorItem(),
+          Label(@"Virtual Console"),
+          Option(@"VC Greenscale", @"palette"),
+          Option(@"VC Grayscale", @"palette")
         ];
 
         // Deep mutable copy
@@ -521,10 +525,12 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
       @"Super Game Boy"   : @"SGB",
       @"Game Boy Color"   : @"GBC",
       @"Dot Matrix"       : @"GB - DMG",
-      @"Game Boy Pocket"  : @"Pocket",
+      @"Game Boy Pocket"  : @"GB - MGB",
       @"Game Boy Light"   : @"GB - Light",
-      @"DMG Greenscale"   : @"Greenscale",
-      @"SGB Grayscale"    : @"SGB - 2H"
+      @"Greenscale"       : @"Pocket Tales",
+      @"SGB Grayscale"    : @"SGB - 2H",
+      @"VC Grayscale"     : @"VC - Gray",
+      @"VC Greenscale"    : @"VC - Green"
     };
 
     palette = paletteNames[palette];

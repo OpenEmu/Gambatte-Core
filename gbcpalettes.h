@@ -546,6 +546,19 @@ static const unsigned short sgb4H[] = {	// 4-H (SGB DMG-esque)
 	PACK15_4(0xF8F8C8, 0xB8C058, 0x808840, 0x405028)
 };
 
+// Virtual Console
+static const unsigned short vcGreen[] = {
+	PACK15_4(0xBDFF21, 0x9CEF29, 0x5A8C42, 0x4A4A4A),
+	PACK15_4(0xBDFF21, 0x9CEF29, 0x5A8C42, 0x4A4A4A),
+	PACK15_4(0xBDFF21, 0x9CEF29, 0x5A8C42, 0x4A4A4A)
+};
+
+static const unsigned short vcGray[] = {
+	PACK15_4(0xCECEAD, 0xA5A58C, 0x6B6B52, 0x292919),
+	PACK15_4(0xCECEAD, 0xA5A58C, 0x6B6B52, 0x292919),
+	PACK15_4(0xCECEAD, 0xA5A58C, 0x6B6B52, 0x292919)
+};
+
 // Special Palettes <https://www.deviantart.com/thewolfbunny/gallery/69987002/game-boy-palettes>
 static const unsigned short sgbZL[] = {	// Link's Awakening DX
 	PACK15_4(0xF8F8B0, 0x78C078, 0x688840, 0x583820),
@@ -621,11 +634,15 @@ static const unsigned short pExt3[] = {
 struct GbcPaletteEntry { const char *title; const unsigned short *p; };
 
 static const GbcPaletteEntry gbcDirPalettes[] = {
-	{ "GB - DMG", gbdmg },	// GB Pea Soup Green
+	{ "GB - DMG", p799510 },	// GB Pea Soup Green (Squidlit)
 	{ "GB - Light", gblit },	// GB Light Aquamarine
+	{ "GB - MGB", gbpoc },	// GB Pocket Newsprint
 	{ "GBC - Dark Green", p31C },	// A + Right (default GBC)
+	{ "Pocket Tales", sgbACR },	// Conker's Pocket Tales
 	{ "SGB - 1A", sgb1A },	// 1-A (default SGB)
-	{ "SGB - 2H", sgb2H }	// SGB Grayscale
+	{ "SGB - 2H", sgb2H },	// SGB Grayscale
+	{ "VC - Gray", vcGray },
+	{ "VC - Green", vcGreen }
 };
 
 static const GbcPaletteEntry gbcTitlePalettes[] = {
