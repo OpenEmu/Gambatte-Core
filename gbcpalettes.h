@@ -560,16 +560,23 @@ static const unsigned short vcGray[] = {
 };
 
 // Special Palettes <https://www.deviantart.com/thewolfbunny/gallery/69987002/game-boy-palettes>
-static const unsigned short sgbZL[] = {	// Link's Awakening DX
-	PACK15_4(0xF8F8B0, 0x78C078, 0x688840, 0x583820),
-	PACK15_4(0xF8F8B0, 0x78C078, 0x688840, 0x583820),
-	PACK15_4(0xF8F8B0, 0x78C078, 0x688840, 0x583820)
+
+static const unsigned short p799510[] = {	// Squidlit
+	PACK15_4(0x9CBE0C, 0x6E870A, 0x2C6234, 0x0C360C),
+	PACK15_4(0x9CBE0C, 0x6E870A, 0x2C6234, 0x0C360C),
+	PACK15_4(0x9CBE0C, 0x6E870A, 0x2C6234, 0x0C360C)
 };
 
-static const unsigned short sgbWM[] = {	// Mega Man World V
-	PACK15_4(0xD0D0D0, 0x70A0E0, 0x406890, 0x082030),
-	PACK15_4(0xD0D0D0, 0x70A0E0, 0x406890, 0x082030),
-	PACK15_4(0xD0D0D0, 0x70A0E0, 0x406890, 0x082030)
+static const unsigned short sgbACR[] = {	// Conker's Pocket Tales
+	PACK15_4(0xD0D860, 0x88A000, 0x385000, 0x000000),
+	PACK15_4(0xD0D860, 0x88A000, 0x385000, 0x000000),
+	PACK15_4(0xD0D860, 0x88A000, 0x385000, 0x000000)
+};
+
+static const unsigned short pAMA[] = {	// Superball Ivory (Super Mario Maker 2)
+	PACK15_4(0xEEF0BC, 0xBCBC8A, 0x828250, 0x646432),
+	PACK15_4(0xEEF0BC, 0xBCBC8A, 0x828250, 0x646432),
+	PACK15_4(0xEEF0BC, 0xBCBC8A, 0x828250, 0x646432)
 };
 
 static const unsigned short sgbAP[] = {	// Pokémon <https://github.com/pret/pokered>
@@ -584,28 +591,28 @@ static const unsigned short sgbAPS[] = {	// Pokémon Yellow <https://github.com/
 	PACK15_4(0xFFFFF7, 0xFFF7B5, 0xDE8484, 0x313131)
 };
 
-static const unsigned short pSWJ[] = {	// WonderSwan Monochrome
+static const unsigned short pSWJ[] = {	// WonderSwan Monochrome (because Gunpei Yokoi)
 	PACK15_4(0xFEFEFE, 0xC2C2C2, 0x686868, 0x1D1D1D),
 	PACK15_4(0xFEFEFE, 0xC2C2C2, 0x686868, 0x1D1D1D),
 	PACK15_4(0xFEFEFE, 0xC2C2C2, 0x686868, 0x1D1D1D)
 };
 
-static const unsigned short sgbACR[] = {	// Conker's Pocket Tales
-	PACK15_4(0xD0D860, 0x88A000, 0x385000, 0x000000),
-	PACK15_4(0xD0D860, 0x88A000, 0x385000, 0x000000),
-	PACK15_4(0xD0D860, 0x88A000, 0x385000, 0x000000)
+static const unsigned short pVUE[] = {	// VirtualBoy
+	PACK15_4(0xE30000, 0x950000, 0x560000, 0x000000),
+	PACK15_4(0xE30000, 0x950000, 0x560000, 0x000000),
+	PACK15_4(0xE30000, 0x950000, 0x560000, 0x000000)
 };
 
-static const unsigned short p799510[] = {	// Squidlit
-	PACK15_4(0x9CBE0C, 0x6E870A, 0x2C6234, 0x0C360C),
-	PACK15_4(0x9CBE0C, 0x6E870A, 0x2C6234, 0x0C360C),
-	PACK15_4(0x9CBE0C, 0x6E870A, 0x2C6234, 0x0C360C)
+static const unsigned short sgbWM[] = {	// Mega Man World V
+	PACK15_4(0xD0D0D0, 0x70A0E0, 0x406890, 0x082030),
+	PACK15_4(0xD0D0D0, 0x70A0E0, 0x406890, 0x082030),
+	PACK15_4(0xD0D0D0, 0x70A0E0, 0x406890, 0x082030)
 };
 
-static const unsigned short pAMA[] = {	// Superball Ivory (Super Mario Maker 2)
-	PACK15_4(0xEEF0BC, 0xBCBC8A, 0x828250, 0x646432),
-	PACK15_4(0xEEF0BC, 0xBCBC8A, 0x828250, 0x646432),
-	PACK15_4(0xEEF0BC, 0xBCBC8A, 0x828250, 0x646432)
+static const unsigned short sgbZL[] = {	// Link's Awakening DX
+	PACK15_4(0xF8F8B0, 0x78C078, 0x688840, 0x583820),
+	PACK15_4(0xF8F8B0, 0x78C078, 0x688840, 0x583820),
+	PACK15_4(0xF8F8B0, 0x78C078, 0x688840, 0x583820)
 };
 
 // Extra Palettes
@@ -641,8 +648,9 @@ static const GbcPaletteEntry gbcDirPalettes[] = {
 	{ "Pocket Tales", sgbACR },	// Conker's Pocket Tales
 	{ "SGB - 1A", sgb1A },	// 1-A (default SGB)
 	{ "SGB - 2H", sgb2H },	// SGB Grayscale
-	{ "VC - Gray", vcGray },
-	{ "VC - Green", vcGreen }
+	{ "VC - Gray", vcGray },	// Virtual Console Grayscale
+	{ "VC - Green", vcGreen },	// Virtual Console Greenscale
+	{ "VirtualBoy", pVUE }	// VirtualBoy
 };
 
 static const GbcPaletteEntry gbcTitlePalettes[] = {

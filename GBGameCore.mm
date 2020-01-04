@@ -353,6 +353,7 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
           Label(@"Monochrome Palettes"),
           Option(@"Greenscale", @"palette"),
           Option(@"SGB Grayscale", @"palette"),
+          Option(@"VirtualBoy", @"palette"),
           SeparatorItem(),
           Label(@"Virtual Console"),
           Option(@"VC Greenscale", @"palette"),
@@ -530,7 +531,8 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
       @"Greenscale"       : @"Pocket Tales",
       @"SGB Grayscale"    : @"SGB - 2H",
       @"VC Grayscale"     : @"VC - Gray",
-      @"VC Greenscale"    : @"VC - Green"
+      @"VC Greenscale"    : @"VC - Green",
+      @"VirtualBoy"       : @"VirtualBoy"
     };
 
     palette = paletteNames[palette];
