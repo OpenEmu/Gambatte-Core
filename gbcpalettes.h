@@ -553,6 +553,12 @@ static const unsigned short vcGreen[] = {
 	PACK15_4(0xBDFF21, 0x9CEF29, 0x5A8C42, 0x4A4A4A)
 };
 
+static const unsigned short vcGreenAlt[] = {
+	PACK15_4(0xDEFFCE, 0x73BD5A, 0x215A42, 0x001019),
+	PACK15_4(0xDEFFCE, 0x73BD5A, 0x215A42, 0x001019),
+	PACK15_4(0xDEFFCE, 0x73BD5A, 0x215A42, 0x001019)
+};
+
 static const unsigned short vcGray[] = {
 	PACK15_4(0xCECEAD, 0xA5A58C, 0x6B6B52, 0x292919),
 	PACK15_4(0xCECEAD, 0xA5A58C, 0x6B6B52, 0x292919),
@@ -645,6 +651,7 @@ static const GbcPaletteEntry gbcDirPalettes[] = {
 	{ "GB - Light", gblit },	// GB Light Aquamarine
 	{ "GB - MGB", gbpoc },	// GB Pocket Newsprint
 	{ "GBC - Dark Green", p31C },	// A + Right (default GBC)
+	{ "GBC - Grayscale", p016 },	// B + Left
 	{ "Pocket Tales", sgbACR },	// Conker's Pocket Tales
 	{ "SGB - 1A", sgb1A },	// 1-A (default SGB)
 	{ "SGB - 2H", sgb2H },	// SGB Grayscale

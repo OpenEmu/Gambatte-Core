@@ -352,6 +352,7 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
           SeparatorItem(),
           Label(@"Monochrome Palettes"),
           Option(@"Greenscale", @"palette"),
+          Option(@"GBC Grayscale", @"palette"),
           Option(@"SGB Grayscale", @"palette"),
           Option(@"VirtualBoy", @"palette"),
           SeparatorItem(),
@@ -529,6 +530,7 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
       @"Game Boy Pocket"  : @"GB - MGB",
       @"Game Boy Light"   : @"GB - Light",
       @"Greenscale"       : @"Pocket Tales",
+      @"GBC Grayscale"    : @"GBC - Grayscale",
       @"SGB Grayscale"    : @"SGB - 2H",
       @"VC Grayscale"     : @"VC - Gray",
       @"VC Greenscale"    : @"VC - Green",
@@ -567,8 +569,8 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
 
         if (gbc_bios_palette == 0)
         {
-            // no custom palette found, load SGB Grayscale 2-H
-            gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("SGB - 2H"));
+            // no custom palette found, load Grayscale
+            gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("VC - Gray"));
         }
     }
     else if ([palette isEqualToString:@"SGB"])
