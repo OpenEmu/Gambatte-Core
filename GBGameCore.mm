@@ -351,14 +351,18 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
           Option(@"Game Boy Light", @"palette"),
           SeparatorItem(),
           Label(@"Monochrome Palettes"),
-          Option(@"Greenscale", @"palette"),
+          Option(@"SGB Greenscale", @"palette"),
           Option(@"GBC Grayscale", @"palette"),
           Option(@"SGB Grayscale", @"palette"),
           Option(@"VirtualBoy", @"palette"),
           SeparatorItem(),
           Label(@"Virtual Console"),
           Option(@"VC Greenscale", @"palette"),
-          Option(@"VC Grayscale", @"palette")
+          Option(@"VC Grayscale", @"palette"),
+          SeparatorItem(),
+          Label(@"Extra Palettes"),
+          Option(@"Greenscale", @"palette"),
+          Option(@"WonderSwan", @"palette")
         ];
 
         // Deep mutable copy
@@ -527,14 +531,16 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
       @"Super Game Boy"   : @"SGB",
       @"Game Boy Color"   : @"GBC",
       @"Dot Matrix"       : @"GB - DMG",
-      @"Game Boy Pocket"  : @"GB - MGB",
       @"Game Boy Light"   : @"GB - Light",
-      @"Greenscale"       : @"Pocket Tales",
+      @"Game Boy Pocket"  : @"GB - MGB",
+      @"Greenscale"       : @"Squidlit",
       @"GBC Grayscale"    : @"GBC - Grayscale",
       @"SGB Grayscale"    : @"SGB - 2H",
+      @"SGB Greenscale"   : @"Pocket Tales",
       @"VC Grayscale"     : @"VC - Gray",
       @"VC Greenscale"    : @"VC - Green",
-      @"VirtualBoy"       : @"VirtualBoy"
+      @"VirtualBoy"       : @"VirtualBoy",
+      @"WonderSwan"       : @"WonderSwan"
     };
 
     palette = paletteNames[palette];
@@ -569,8 +575,9 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
 
         if (gbc_bios_palette == 0)
         {
-            // no custom palette found, load Grayscale
-            gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("VC - Gray"));
+            // no custom palette found, load GB Pocket Newsprint (reminiscent of Virtual Console grayscale)
+            // NOTE: I found traditional grayscale with a white background is a bit blinding
+            gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("GB - MGB"));
         }
     }
     else if ([palette isEqualToString:@"SGB"])

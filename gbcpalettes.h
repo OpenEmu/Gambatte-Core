@@ -647,7 +647,7 @@ static const unsigned short pExt3[] = {
 struct GbcPaletteEntry { const char *title; const unsigned short *p; };
 
 static const GbcPaletteEntry gbcDirPalettes[] = {
-	{ "GB - DMG", p799510 },	// GB Pea Soup Green (Squidlit)
+	{ "GB - DMG", gbdmg },	// GB Pea Soup Green
 	{ "GB - Light", gblit },	// GB Light Aquamarine
 	{ "GB - MGB", gbpoc },	// GB Pocket Newsprint
 	{ "GBC - Dark Green", p31C },	// A + Right (default GBC)
@@ -655,9 +655,11 @@ static const GbcPaletteEntry gbcDirPalettes[] = {
 	{ "Pocket Tales", sgbACR },	// Conker's Pocket Tales
 	{ "SGB - 1A", sgb1A },	// 1-A (default SGB)
 	{ "SGB - 2H", sgb2H },	// SGB Grayscale
+	{ "Squidlit", p799510 },	// Greenscale
 	{ "VC - Gray", vcGray },	// Virtual Console Grayscale
 	{ "VC - Green", vcGreen },	// Virtual Console Greenscale
-	{ "VirtualBoy", pVUE }	// VirtualBoy
+	{ "VirtualBoy", pVUE },	// VirtualBoy
+	{ "WonderSwan", pSWJ }
 };
 
 static const GbcPaletteEntry gbcTitlePalettes[] = {
@@ -919,7 +921,7 @@ static unsigned long gbcToRgb32(const unsigned bgr15) {
   unsigned gFinal = ((g * 3) + b);
 	unsigned bFinal = ((r * 3) + (g * 2) + (b * 11));
 
-	return rFinal << 16 | gFinal << 9 | bFinal >> 1;
+	return (r << 19) | (g << 11) | (b << 3);	// true color
 }
 
 }
