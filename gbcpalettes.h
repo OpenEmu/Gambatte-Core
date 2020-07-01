@@ -586,15 +586,15 @@ static const unsigned short pAMA[] = {	// Superball Ivory (Super Mario Maker 2)
 };
 
 static const unsigned short sgbAP[] = {	// Pokémon <https://github.com/pret/pokered>
-	PACK15_4(0xFFEFFF, 0xF7B58C, 0x84739C, 0x191010),
-	PACK15_4(0xFFEFFF, 0xF7B58C, 0x84739C, 0x191010),
-	PACK15_4(0xFFEFFF, 0xF7B58C, 0x84739C, 0x191010)
+	PACK15_4(0xF8E8F8, 0xF0B088, 0x807098, 0x181010),
+	PACK15_4(0xF8E8F8, 0xF0B088, 0x807098, 0x181010),
+	PACK15_4(0xF8E8F8, 0xF0B088, 0x807098, 0x181010)
 };
 
 static const unsigned short sgbAPS[] = {	// Pokémon Yellow <https://github.com/pret/pokeyellow>
-	PACK15_4(0xFFFFF7, 0xFFF7B5, 0xDE8484, 0x313131),
-	PACK15_4(0xFFFFF7, 0xFFF7B5, 0xDE8484, 0x313131),
-	PACK15_4(0xFFFFF7, 0xFFF7B5, 0xDE8484, 0x313131)
+	PACK15_4(0xF8F8F0, 0xF8F0B0, 0xD88080, 0x303030),
+	PACK15_4(0xF8F8F0, 0xF8F0B0, 0xD88080, 0x303030),
+	PACK15_4(0xF8F8F0, 0xF8F0B0, 0xD88080, 0x303030)
 };
 
 static const unsigned short pSWJ[] = {	// WonderSwan Monochrome (because Gunpei Yokoi)
