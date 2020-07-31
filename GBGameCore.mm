@@ -352,8 +352,8 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
           SeparatorItem(),
           Label(@"Monochrome Palettes"),
           Option(@"SGB Greenscale", @"palette"),
-          Option(@"GBC Grayscale", @"palette"),
           Option(@"SGB Grayscale", @"palette"),
+          Option(@"GBC Grayscale", @"palette"),
           Option(@"VirtualBoy", @"palette"),
           SeparatorItem(),
           Label(@"Virtual Console"),
@@ -361,6 +361,7 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
           Option(@"VC Grayscale", @"palette"),
           SeparatorItem(),
           Label(@"Extra Palettes"),
+          Option(@"Analogue", @"palette"),
           Option(@"Greenscale", @"palette"),
           Option(@"WonderSwan", @"palette")
         ];
@@ -531,15 +532,16 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
       @"Super Game Boy"   : @"SGB",
       @"Game Boy Color"   : @"GBC",
       @"Dot Matrix"       : @"GB - DMG",
-      @"Game Boy Light"   : @"GB - Light",
       @"Game Boy Pocket"  : @"GB - MGB",
-      @"Greenscale"       : @"Squidlit",
-      @"GBC Grayscale"    : @"GBC - Grayscale",
-      @"SGB Grayscale"    : @"SGB - 2H",
+      @"Game Boy Light"   : @"GB - Light",
       @"SGB Greenscale"   : @"Pocket Tales",
-      @"VC Grayscale"     : @"VC - Gray",
-      @"VC Greenscale"    : @"VC - Green",
+      @"SGB Grayscale"    : @"SGB - 2H",
+      @"GBC Grayscale"    : @"GBC - Grayscale",
       @"VirtualBoy"       : @"VirtualBoy",
+      @"VC Greenscale"    : @"VC - Green",
+      @"VC Grayscale"     : @"VC - Gray",
+      @"Analogue"         : @"Analogue",
+      @"Greenscale"       : @"Squidlit",
       @"WonderSwan"       : @"WonderSwan"
     };
 

@@ -492,7 +492,7 @@ static const unsigned short sgb3G[] = {
 	PACK15_4(0x60D850, 0xF8F8F8, 0xC83038, 0x380000)
 };
 
-static const unsigned short sgb3H[] = {	// 3-H (SGB Greenscale)
+static const unsigned short sgb3H[] = {	// 3-H (SGB Vivid Greenscale)
 	PACK15_4(0xE0F8A0, 0x78C838, 0x488818, 0x081800),
 	PACK15_4(0xE0F8A0, 0x78C838, 0x488818, 0x081800),
 	PACK15_4(0xE0F8A0, 0x78C838, 0x488818, 0x081800)
@@ -640,6 +640,12 @@ static const unsigned short pExt3[] = {
 	PACK15_4(0xF8F8F8, 0xD7543C, 0x7D3023, 0x000000)
 };
 
+static const unsigned short pAnalogue[] = {
+	PACK15_4(0xE8F8E0, 0xB0F088, 0x509878, 0x202850),
+	PACK15_4(0xE8F8E0, 0xB0F088, 0x509878, 0x202850),
+	PACK15_4(0xE8F8E0, 0xB0F088, 0x509878, 0x202850)
+};
+
 #undef PACK15_4
 #undef PACK15_1
 #undef TO5BIT
@@ -647,6 +653,7 @@ static const unsigned short pExt3[] = {
 struct GbcPaletteEntry { const char *title; const unsigned short *p; };
 
 static const GbcPaletteEntry gbcDirPalettes[] = {
+	{ "Analogue", pAnalogue },	// Analogue Pocket / GB Studio
 	{ "GB - DMG", gbdmg },	// GB Pea Soup Green
 	{ "GB - Light", gblit },	// GB Light Aquamarine
 	{ "GB - MGB", gbpoc },	// GB Pocket Newsprint
