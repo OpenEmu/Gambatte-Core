@@ -13,7 +13,7 @@
 //   You should have received a copy of the GNU General Public License
 //   version 2 along with this program; if not, write to the
 //   Free Software Foundation, Inc.,
-//   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+//   51 Franklin St, Fifth Floor, Boston, MA  02110-1301, USA.
 //
 
 #ifndef PPU_H
@@ -23,9 +23,15 @@
 #include "ly_counter.h"
 #include "sprite_mapper.h"
 #include "gbint.h"
+
 #include <cstddef>
 
 namespace gambatte {
+
+enum {
+	max_num_palettes = 8,
+	num_palette_entries = 4,
+	ppu_force_signed_enum = -1 };
 
 class PPUFrameBuf {
 public:
@@ -53,10 +59,10 @@ struct PPUState {
 };
 
 struct PPUPriv {
-	unsigned long bgPalette[8 * 4];
-	unsigned long spPalette[8 * 4];
-	struct Sprite { unsigned char spx, oampos, line, attrib; } spriteList[11];
-	unsigned short spwordList[11];
+	unsigned long bgPalette[max_num_palettes * num_palette_entries];
+	unsigned long spPalette[max_num_palettes * num_palette_entries];
+	struct Sprite { unsigned char spx, oampos, line, attrib; } spriteList[lcd_max_num_sprites_per_line + 1];
+	unsigned short spwordList[lcd_max_num_sprites_per_line + 1];
 	unsigned char nextSprite;
 	unsigned char currentSprite;
 
@@ -132,7 +138,7 @@ public:
 	void setWx(unsigned wx) { p_.wx = wx; }
 	void setWy(unsigned wy) { p_.wy = wy; }
 	void updateWy2() { p_.wy2 = p_.wy; }
-	void speedChange(unsigned long cycleCounter);
+	void speedChange();
 	unsigned long * spPalette() { return p_.spPalette; }
 	void update(unsigned long cc);
 

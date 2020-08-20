@@ -13,7 +13,7 @@
 //   You should have received a copy of the GNU General Public License
 //   version 2 along with this program; if not, write to the
 //   Free Software Foundation, Inc.,
-//   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+//   51 Franklin St, Fifth Floor, Boston, MA  02110-1301, USA.
 //
 
 #ifndef MEMORY_H
@@ -48,7 +48,7 @@ public:
 		lcd_.setOsdElement(osdElement);
 	}
 
-	unsigned long stop(unsigned long cycleCounter);
+	unsigned long stop(unsigned long cycleCounter, bool &skip);
 	bool isCgb() const { return lcd_.isCgb(); }
 	bool ime() const { return intreq_.ime(); }
 	bool halted() const { return intreq_.halted(); }
@@ -62,9 +62,12 @@ public:
 		return (cc - intreq_.eventTime(intevent_blit)) >> isDoubleSpeed();
 	}
 
-	void halt() { intreq_.halt(); }
+	void freeze(unsigned long cc);
+	bool halt(unsigned long cc);
 	void ei(unsigned long cycleCounter) { if (!ime()) { intreq_.ei(cycleCounter); } }
 	void di() { intreq_.di(); }
+	unsigned pendingIrqs(unsigned long cc);
+	void ackIrq(unsigned bit, unsigned long cc);
 
 	unsigned ff_read(unsigned p, unsigned long cc) {
 		return p < 0x80 ? nontrivial_ff_read(p, cc) : ioamhram_[p + 0x100];
@@ -113,7 +116,6 @@ private:
 	Cartridge cart_;
 	unsigned char ioamhram_[0x200];
 	InputGetter *getInput_;
-	unsigned long divLastUpdate_;
 	unsigned long lastOamDmaUpdate_;
 	InterruptRequester intreq_;
 	Tima tima_;
@@ -123,8 +125,10 @@ private:
 	unsigned short dmaSource_;
 	unsigned short dmaDestination_;
 	unsigned char oamDmaPos_;
+	unsigned char oamDmaStartPos_;
 	unsigned char serialCnt_;
 	bool blanklcd_;
+	enum HdmaState { hdma_low, hdma_high, hdma_requested } haltHdmaState_;
 
 	void decEventCycles(IntEventId eventId, unsigned long dec);
 	void oamDmaInitSetup();
@@ -132,6 +136,7 @@ private:
 	void startOamDma(unsigned long cycleCounter);
 	void endOamDma(unsigned long cycleCounter);
 	unsigned char const * oamDmaSrcPtr() const;
+	unsigned long dma(unsigned long cc);
 	unsigned nontrivial_ff_read(unsigned p, unsigned long cycleCounter);
 	unsigned nontrivial_read(unsigned p, unsigned long cycleCounter);
 	void nontrivial_ff_write(unsigned p, unsigned data, unsigned long cycleCounter);

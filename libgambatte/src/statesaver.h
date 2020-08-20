@@ -13,13 +13,14 @@
 //   You should have received a copy of the GNU General Public License
 //   version 2 along with this program; if not, write to the
 //   Free Software Foundation, Inc.,
-//   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+//   51 Franklin St, Fifth Floor, Boston, MA  02110-1301, USA.
 //
 
 #ifndef STATESAVER_H
 #define STATESAVER_H
 
 #include "gbint.h"
+
 #include <cstddef>
 #include <string>
 
@@ -33,7 +34,7 @@ public:
 	enum { ss_div = 1 << 2 };
 	enum { ss_width = 160 >> ss_shift };
 	enum { ss_height = 144 >> ss_shift };
-    
+
     static bool serializeState(SaveState const &state, std::ostream &stream);
     static bool deserializeState(SaveState &state, std::istream &stream);
 
