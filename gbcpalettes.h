@@ -723,6 +723,7 @@ static const GbcPaletteEntry gbcTitlePalettes[] = {
 	{ "KOF HEATOFBATTLE", p50F },	// unofficial
 	{ "LOLO", p50F },	// unofficial ("LOLO2" alt.)
 	{ "LOLO2", p50F },
+	{ "LUNAR CHASE", p016 },	// unofficial ("X" alt.)
 	{ "MAGNETIC SOCCER", p50E },
 	{ "MANSELL", p012 },
 	{ "MARIO & YOSHI", p305 },
@@ -828,6 +829,7 @@ static const GbcPaletteEntry sgbTitlePalettes[] = {
 	{ "KIRBY BLOCKBALL", sgb4D },	// unofficial (Nintendo Power Issue #83)
 	{ "KIRBY DREAM LAND", sgb2C },
 	{ "KIRBY'S PINBALL", sgb1C },
+	{ "LUNAR CHASE", sgb4D },	// unofficial ("X" alt.)
 	{ "MARIO & YOSHI", sgb2D },
 	{ "MARIOLAND2", sgb3D },
 	{ "MEGA MAN 2", sgbWM },	//  unofficial (SGB)
