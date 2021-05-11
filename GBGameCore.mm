@@ -354,7 +354,6 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
           Option(@"SGB Greenscale", @"palette"),
           Option(@"SGB Grayscale", @"palette"),
           Option(@"GBC Grayscale", @"palette"),
-          Option(@"VirtualBoy", @"palette"),
           SeparatorItem(),
           Label(@"Virtual Console"),
           Option(@"VC Greenscale", @"palette"),
@@ -363,6 +362,8 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
           Label(@"Extra Palettes"),
           Option(@"Analogue", @"palette"),
           Option(@"Greenscale", @"palette"),
+          Option(@"Pocket Tales", @"palette"),
+          Option(@"VirtualBoy", @"palette"),
           Option(@"WonderSwan", @"palette")
         ];
 
@@ -534,7 +535,7 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
       @"Dot Matrix"       : @"GB - DMG",
       @"Game Boy Pocket"  : @"GB - MGB",
       @"Game Boy Light"   : @"GB - Light",
-      @"SGB Greenscale"   : @"Pocket Tales",
+      @"SGB Greenscale"   : @"SGB - 4H",
       @"SGB Grayscale"    : @"SGB - 2H",
       @"GBC Grayscale"    : @"GBC - Grayscale",
       @"VirtualBoy"       : @"VirtualBoy",
@@ -542,6 +543,8 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
       @"VC Grayscale"     : @"VC - Gray",
       @"Analogue"         : @"Analogue",
       @"Greenscale"       : @"Squidlit",
+      @"Pocket Tales"     : @"Pocket Tales",
+      @"VirtualBoy"       : @"VirtualBoy",
       @"WonderSwan"       : @"WonderSwan"
     };
 

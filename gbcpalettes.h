@@ -27,7 +27,7 @@ namespace {
 #define PACK15_4(c0, c1, c2, c3) \
 	PACK15_1(c0), PACK15_1(c1), PACK15_1(c2), PACK15_1(c3)
 
-// Hardware Palettes
+// Hardware Palettes (TheWolfBunny)
 static const unsigned short gbdmg[] = {	// Game Boy | DMG-001
 	PACK15_4(0x7F860F, 0x577C44, 0x365D48, 0x2A453B),
 	PACK15_4(0x7F860F, 0x577C44, 0x365D48, 0x2A453B),
@@ -565,12 +565,36 @@ static const unsigned short vcGray[] = {
 	PACK15_4(0xCECEAD, 0xA5A58C, 0x6B6B52, 0x292919)
 };
 
+static const unsigned short vcGrayAlt[] = {	// Kirby's Dream Collection
+	PACK15_4(0xBDBD9C, 0x8C8C73, 0x5A5A4A, 0x313119),
+	PACK15_4(0xBDBD9C, 0x8C8C73, 0xBDBD9C, 0x313119),
+	PACK15_4(0x8C8C73, 0x8C8C73, 0x5A5A4A, 0x313119)
+};
+
 // Special Palettes <https://www.deviantart.com/thewolfbunny/gallery/69987002/game-boy-palettes>
 
-static const unsigned short p799510[] = {	// Squidlit
+static const unsigned short twb799510[] = {	// Squidlit
 	PACK15_4(0x9CBE0C, 0x6E870A, 0x2C6234, 0x0C360C),
 	PACK15_4(0x9CBE0C, 0x6E870A, 0x2C6234, 0x0C360C),
 	PACK15_4(0x9CBE0C, 0x6E870A, 0x2C6234, 0x0C360C)
+};
+
+static const unsigned short twbAMA[] = {	// Superball Ivory (Super Mario Maker 2)
+	PACK15_4(0xEEF0BC, 0xBCBC8A, 0x828250, 0x646432),
+	PACK15_4(0xEEF0BC, 0xBCBC8A, 0x828250, 0x646432),
+	PACK15_4(0xEEF0BC, 0xBCBC8A, 0x828250, 0x646432)
+};
+
+static const unsigned short twbSWJ[] = {	// WonderSwan Monochrome (because Gunpei Yokoi)
+	PACK15_4(0xFEFEFE, 0xC2C2C2, 0x686868, 0x1D1D1D),
+	PACK15_4(0xFEFEFE, 0xC2C2C2, 0x686868, 0x1D1D1D),
+	PACK15_4(0xFEFEFE, 0xC2C2C2, 0x686868, 0x1D1D1D)
+};
+
+static const unsigned short twbVUE[] = {	// VirtualBoy
+	PACK15_4(0xFF0000, 0xAA0000, 0x550000, 0x000000),
+	PACK15_4(0xFF0000, 0xAA0000, 0x550000, 0x000000),
+	PACK15_4(0xFF0000, 0xAA0000, 0x550000, 0x000000)
 };
 
 static const unsigned short sgbACR[] = {	// Conker's Pocket Tales
@@ -579,34 +603,16 @@ static const unsigned short sgbACR[] = {	// Conker's Pocket Tales
 	PACK15_4(0xD0D860, 0x88A000, 0x385000, 0x000000)
 };
 
-static const unsigned short pAMA[] = {	// Superball Ivory (Super Mario Maker 2)
-	PACK15_4(0xEEF0BC, 0xBCBC8A, 0x828250, 0x646432),
-	PACK15_4(0xEEF0BC, 0xBCBC8A, 0x828250, 0x646432),
-	PACK15_4(0xEEF0BC, 0xBCBC8A, 0x828250, 0x646432)
+static const unsigned short sgbAP[] = {	// Pokémon <https://github.com/pret/pokered/blob/master/data/sgb/sgb_palettes.asm>
+	PACK15_4(0xFFEFFF, 0xF7B58C, 0x84739C, 0x191010),
+	PACK15_4(0xFFEFFF, 0xF7B58C, 0x84739C, 0x191010),
+	PACK15_4(0xFFEFFF, 0xF7B58C, 0x84739C, 0x191010)
 };
 
-static const unsigned short sgbAP[] = {	// Pokémon <https://github.com/pret/pokered>
-	PACK15_4(0xF8E8F8, 0xF0B088, 0x807098, 0x181010),
-	PACK15_4(0xF8E8F8, 0xF0B088, 0x807098, 0x181010),
-	PACK15_4(0xF8E8F8, 0xF0B088, 0x807098, 0x181010)
-};
-
-static const unsigned short sgbAPS[] = {	// Pokémon Yellow <https://github.com/pret/pokeyellow>
-	PACK15_4(0xF8F8F0, 0xF8F0B0, 0xD88080, 0x303030),
-	PACK15_4(0xF8F8F0, 0xF8F0B0, 0xD88080, 0x303030),
-	PACK15_4(0xF8F8F0, 0xF8F0B0, 0xD88080, 0x303030)
-};
-
-static const unsigned short pSWJ[] = {	// WonderSwan Monochrome (because Gunpei Yokoi)
-	PACK15_4(0xFEFEFE, 0xC2C2C2, 0x686868, 0x1D1D1D),
-	PACK15_4(0xFEFEFE, 0xC2C2C2, 0x686868, 0x1D1D1D),
-	PACK15_4(0xFEFEFE, 0xC2C2C2, 0x686868, 0x1D1D1D)
-};
-
-static const unsigned short pVUE[] = {	// VirtualBoy
-	PACK15_4(0xE30000, 0x950000, 0x560000, 0x000000),
-	PACK15_4(0xE30000, 0x950000, 0x560000, 0x000000),
-	PACK15_4(0xE30000, 0x950000, 0x560000, 0x000000)
+static const unsigned short sgbAPS[] = {	// Pokémon Yellow <https://github.com/pret/pokeyellow/blob/master/data/sgb/sgb_palettes.asm>
+	PACK15_4(0xFFFFF7, 0xFFF7B5, 0xDE8484, 0x313131),
+	PACK15_4(0xFFFFF7, 0xFFF7B5, 0xDE8484, 0x313131),
+	PACK15_4(0xFFFFF7, 0xFFF7B5, 0xDE8484, 0x313131)
 };
 
 static const unsigned short sgbWM[] = {	// Mega Man World V
@@ -641,9 +647,9 @@ static const unsigned short pExt3[] = {
 };
 
 static const unsigned short pAnalogue[] = {
-	PACK15_4(0xE8F8E0, 0xB0F088, 0x509878, 0x202850),
-	PACK15_4(0xE8F8E0, 0xB0F088, 0x509878, 0x202850),
-	PACK15_4(0xE8F8E0, 0xB0F088, 0x509878, 0x202850)
+	PACK15_4(0xE0F8CF, 0x86C06C, 0x306850, 0x071821),
+	PACK15_4(0xE0F8CF, 0x86C06C, 0x306850, 0x071821),
+	PACK15_4(0xE0F8CF, 0x86C06C, 0x306850, 0x071821)
 };
 
 #undef PACK15_4
@@ -662,11 +668,12 @@ static const GbcPaletteEntry gbcDirPalettes[] = {
 	{ "Pocket Tales", sgbACR },	// Conker's Pocket Tales
 	{ "SGB - 1A", sgb1A },	// 1-A (default SGB)
 	{ "SGB - 2H", sgb2H },	// SGB Grayscale
-	{ "Squidlit", p799510 },	// Greenscale
-	{ "VC - Gray", vcGray },	// Virtual Console Grayscale
+	{ "SGB - 4H", sgb4H },	// SGB Greenscale
+	{ "Squidlit", twb799510 },	// Greenscale
+	{ "VC - Gray", vcGrayAlt },	// Virtual Console Grayscale
 	{ "VC - Green", vcGreen },	// Virtual Console Greenscale
-	{ "VirtualBoy", pVUE },	// VirtualBoy
-	{ "WonderSwan", pSWJ }
+	{ "VirtualBoy", twbVUE },	// VirtualBoy
+	{ "WonderSwan", twbSWJ }
 };
 
 static const GbcPaletteEntry gbcTitlePalettes[] = {
