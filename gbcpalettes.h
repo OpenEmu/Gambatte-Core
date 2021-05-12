@@ -553,10 +553,10 @@ static const unsigned short vcGreen[] = {
 	PACK15_4(0xBDFF21, 0x9CEF29, 0x5A8C42, 0x4A4A4A)
 };
 
-static const unsigned short vcGreenAlt[] = {
-	PACK15_4(0xDEFFCE, 0x73BD5A, 0x215A42, 0x001019),
-	PACK15_4(0xDEFFCE, 0x73BD5A, 0x215A42, 0x001019),
-	PACK15_4(0xDEFFCE, 0x73BD5A, 0x215A42, 0x001019)
+static const unsigned short vcGreenAlt[] = {	// inspired by Dream Land GB (Super Smash Bros. Ultimate)
+	PACK15_4(0xFBFB7C, 0xE0F03E, 0x99B41F, 0x5D5D1F),
+	PACK15_4(0xFBFB7C, 0xE0F03E, 0x99B41F, 0x5D5D1F),
+	PACK15_4(0xFBFB7C, 0xE0F03E, 0x99B41F, 0x5D5D1F)
 };
 
 static const unsigned short vcGray[] = {
@@ -671,7 +671,7 @@ static const GbcPaletteEntry gbcDirPalettes[] = {
 	{ "SGB - 4H", sgb4H },	// SGB Greenscale
 	{ "Squidlit", twb799510 },	// Greenscale
 	{ "VC - Gray", vcGrayAlt },	// Virtual Console Grayscale
-	{ "VC - Green", vcGreen },	// Virtual Console Greenscale
+	{ "VC - Green", vcGreenAlt },	// Virtual Console Greenscale
 	{ "VirtualBoy", twbVUE },	// VirtualBoy
 	{ "WonderSwan", twbSWJ }
 };

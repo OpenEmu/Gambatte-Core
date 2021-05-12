@@ -30,7 +30,7 @@ unsigned long gbcToRgb32(unsigned const bgr15) {
 	unsigned long const g = bgr15 >>  5 & 0x1F;
 	unsigned long const b = bgr15 >> 10 & 0x1F;
 
-	return (r << 19) | (g << 11) | (b << 3);	// true color
+	return (0xFF << 24) | (r << 19) | (g << 11) | (b << 3);	// true color
 }
 
 /*unsigned long gbcToRgb16(unsigned const bgr15) {

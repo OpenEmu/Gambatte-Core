@@ -580,9 +580,9 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
 
         if (gbc_bios_palette == 0)
         {
-            // no custom palette found, load GB Pocket Newsprint (reminiscent of Virtual Console grayscale)
+            // no custom palette found, load GB Pocket inspired TV palette from Kirby's Dream Collection
             // NOTE: I found traditional grayscale with a white background is a bit blinding
-            gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("GB - MGB"));
+            gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("VC - Gray"));
         }
     }
     else if ([palette isEqualToString:@"SGB"])
