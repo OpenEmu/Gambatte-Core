@@ -567,8 +567,8 @@ static const unsigned short vcGray[] = {
 
 static const unsigned short vcGrayAlt[] = {	// Kirby's Dream Collection
 	PACK15_4(0xBDBD9C, 0x8C8C73, 0x5A5A4A, 0x313119),
-	PACK15_4(0xBDBD9C, 0x8C8C73, 0xBDBD9C, 0x313119),
-	PACK15_4(0x8C8C73, 0x8C8C73, 0x5A5A4A, 0x313119)
+	PACK15_4(0xBDBD9C, 0x8C8C73, 0x5A5A4A, 0x313119),
+	PACK15_4(0xBDBD9C, 0x8C8C73, 0x5A5A4A, 0x313119)
 };
 
 // Special Palettes <https://www.deviantart.com/thewolfbunny/gallery/69987002/game-boy-palettes>
@@ -652,6 +652,12 @@ static const unsigned short pAnalogue[] = {
 	PACK15_4(0xE0F8CF, 0x86C06C, 0x306850, 0x071821)
 };
 
+static const unsigned short pSML2013[] = {	// Arne's Unnamed Graphics Hack
+	PACK15_4(0xF8F8F8, 0xC8B060, 0x486820, 0x283050),
+	PACK15_4(0x000000, 0xE0C048, 0xB05030, 0x283018),
+	PACK15_4(0x000000, 0xE0C048, 0xB05030, 0x283018)
+};
+
 #undef PACK15_4
 #undef PACK15_1
 #undef TO5BIT
@@ -678,6 +684,7 @@ static const GbcPaletteEntry gbcDirPalettes[] = {
 
 static const GbcPaletteEntry gbcTitlePalettes[] = {
 	{ "ALLEY WAY", p008 },
+	{ "ARNE'SMARIOLAND", pSML2013 },	// homebrew (Arne's Unnamed Graphics Hack)
 	{ "ASTEROIDS", p30E },	// unofficial ("ASTEROIDS/MISCMD" alt.)
 	{ "ASTEROIDS/MISCMD", p30E },
 	{ "ATOMIC PUNK", p30F },	// unofficial ("DYNABLASTER" alt.)
