@@ -361,7 +361,7 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
           SeparatorItem(),
           Label(@"Extra Palettes"),
           Option(@"Analogue", @"palette"),
-          Option(@"Greenscale", @"palette"),
+          Option(@"GB Studio", @"palette"),
           Option(@"Pocket Tales", @"palette"),
           Option(@"VirtualBoy", @"palette"),
           Option(@"WonderSwan", @"palette")
@@ -542,7 +542,7 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
       @"VC Greenscale"    : @"VC - Green",
       @"VC Grayscale"     : @"VC - Gray",
       @"Analogue"         : @"Analogue",
-      @"Greenscale"       : @"Squidlit",
+      @"GB Studio"        : @"GB Studio",
       @"Pocket Tales"     : @"Pocket Tales",
       @"VirtualBoy"       : @"VirtualBoy",
       @"WonderSwan"       : @"WonderSwan"
@@ -580,9 +580,9 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
 
         if (gbc_bios_palette == 0)
         {
-            // no custom palette found, load GB Pocket inspired TV palette from Kirby's Dream Collection
+            // no custom palette found, load GB Pocket palette
             // NOTE: I found traditional grayscale with a white background is a bit blinding
-            gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("VC - Gray"));
+            gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("GB - MGB"));
         }
     }
     else if ([palette isEqualToString:@"SGB"])

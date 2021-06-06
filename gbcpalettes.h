@@ -652,6 +652,12 @@ static const unsigned short pAnalogue[] = {
 	PACK15_4(0xE0F8CF, 0x86C06C, 0x306850, 0x071821)
 };
 
+static const unsigned short pGBStudio[] = {	// GBC
+	PACK15_4(0xE8F8E0, 0xB0F088, 0x509878, 0x202850),
+	PACK15_4(0xE8F8E0, 0xB0F088, 0x509878, 0x202850),
+	PACK15_4(0xE8F8E0, 0xB0F088, 0x509878, 0x202850)
+};
+
 static const unsigned short pSML2013[] = {	// Arne's Unnamed Graphics Hack
 	PACK15_4(0xF8F8F8, 0xC8B060, 0x486820, 0x283050),
 	PACK15_4(0x000000, 0xE0C048, 0xB05030, 0x283018),
@@ -665,19 +671,19 @@ static const unsigned short pSML2013[] = {	// Arne's Unnamed Graphics Hack
 struct GbcPaletteEntry { const char *title; const unsigned short *p; };
 
 static const GbcPaletteEntry gbcDirPalettes[] = {
-	{ "Analogue", pAnalogue },	// Analogue Pocket / GB Studio
+	{ "Analogue", pAnalogue },	// Analogue Pocket
 	{ "GB - DMG", gbdmg },	// GB Pea Soup Green
 	{ "GB - Light", gblit },	// GB Light Aquamarine
 	{ "GB - MGB", gbpoc },	// GB Pocket Newsprint
+	{ "GB Studio", pGBStudio },	// GB Studio
 	{ "GBC - Dark Green", p31C },	// A + Right (default GBC)
 	{ "GBC - Grayscale", p016 },	// B + Left
 	{ "Pocket Tales", sgbACR },	// Conker's Pocket Tales
 	{ "SGB - 1A", sgb1A },	// 1-A (default SGB)
 	{ "SGB - 2H", sgb2H },	// SGB Grayscale
 	{ "SGB - 4H", sgb4H },	// SGB Greenscale
-	{ "Squidlit", twb799510 },	// Greenscale
 	{ "VC - Gray", vcGrayAlt },	// Virtual Console Grayscale
-	{ "VC - Green", vcGreenAlt },	// Virtual Console Greenscale
+	{ "VC - Green", vcGreen },	// Virtual Console Greenscale
 	{ "VirtualBoy", twbVUE },	// VirtualBoy
 	{ "WonderSwan", twbSWJ }
 };
