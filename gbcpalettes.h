@@ -597,7 +597,7 @@ static const unsigned short twbVUE[] = {	// VirtualBoy
 	PACK15_4(0xFF0000, 0xAA0000, 0x550000, 0x000000)
 };
 
-static const unsigned short sgbACR[] = {	// Conker's Pocket Tales
+static const unsigned short sgbACR[] = {	// Conker's Pocket Tales (TheWolfBunny)
 	PACK15_4(0xD0D860, 0x88A000, 0x385000, 0x000000),
 	PACK15_4(0xD0D860, 0x88A000, 0x385000, 0x000000),
 	PACK15_4(0xD0D860, 0x88A000, 0x385000, 0x000000)
@@ -615,13 +615,19 @@ static const unsigned short sgbAPS[] = {	// Pokémon Yellow <https://github.com/
 	PACK15_4(0xFFFFF7, 0xFFF7B5, 0xDE8484, 0x313131)
 };
 
-static const unsigned short sgbWM[] = {	// Mega Man World V
+static const unsigned short sgbQP[] = {	// Cool Spot (Nintendo Power #63)
+	PACK15_4(0xFFF8FF, 0xFF0000, 0x009800, 0x000000),
+	PACK15_4(0xFFF8FF, 0xFF0000, 0x009800, 0x000000),
+	PACK15_4(0xFFF8FF, 0xFF0000, 0x009800, 0x000000)
+};
+
+static const unsigned short sgbWM[] = {	// Mega Man World V (TheWolfBunny)
 	PACK15_4(0xD0D0D0, 0x70A0E0, 0x406890, 0x082030),
 	PACK15_4(0xD0D0D0, 0x70A0E0, 0x406890, 0x082030),
 	PACK15_4(0xD0D0D0, 0x70A0E0, 0x406890, 0x082030)
 };
 
-static const unsigned short sgbZL[] = {	// Link's Awakening DX
+static const unsigned short sgbZL[] = {	// Link's Awakening DX (TheWolfBunny)
 	PACK15_4(0xF8F8B0, 0x78C078, 0x688840, 0x583820),
 	PACK15_4(0xF8F8B0, 0x78C078, 0x688840, 0x583820),
 	PACK15_4(0xF8F8B0, 0x78C078, 0x688840, 0x583820)
@@ -658,10 +664,42 @@ static const unsigned short pGBStudio[] = {	// GBC
 	PACK15_4(0xE8F8E0, 0xB0F088, 0x509878, 0x202850)
 };
 
-static const unsigned short pSML2013[] = {	// Arne's Unnamed Graphics Hack
+static const unsigned short pSML2013[] = {	// Arne's Unnamed Graphics Hack (Super Mario Land)
 	PACK15_4(0xF8F8F8, 0xC8B060, 0x486820, 0x283050),
 	PACK15_4(0x000000, 0xE0C048, 0xB05030, 0x283018),
 	PACK15_4(0x000000, 0xE0C048, 0xB05030, 0x283018)
+};
+
+// Goomba Color & BGB
+static const unsigned short bgbT3[] = {	// Adventure Island
+	PACK15_4(0xFFFFFF, 0x9CB5FF, 0x319400, 0x000000),
+	PACK15_4(0xFFFFDE, 0xEFC673, 0xFF6352, 0x000029),
+	PACK15_4(0xFFFFFF, 0xE7A5A5, 0x7B2929, 0x420000)
+};
+static const unsigned short bgbGQ[] = {	// Adventure Island II: Aliens in Paradise
+	PACK15_4(0xFFFFFF, 0xF7EF75, 0x296BBD, 0x000000),
+	PACK15_4(0xFFFFDE, 0xEFC673, 0xFF6352, 0x000029),
+	PACK15_4(0xFFFFFF, 0xE7A5A5, 0x7B2929, 0x420000)
+};
+static const unsigned short bgbBA[] = { // Batman: The Video Game
+	PACK15_4(0xFFF7EF, 0xC89088, 0x845044, 0x421000),
+	PACK15_4(0xFFFFFF, 0xA5A5C6, 0x52528C, 0x00005A),
+	PACK15_4(0xFFFFFF, 0xADB5BD, 0x5A6B7B, 0x082142)
+};
+static const unsigned short bgbB5[] = { // Batman: Return of the Joker
+	PACK15_4(0xFFFFFF, 0xA5ADBD, 0x525A7B, 0x001039),
+	PACK15_4(0xFFFFFF, 0xA5ADBD, 0x525A7B, 0x001039),
+	PACK15_4(0xFFFFFF, 0xADB5BD, 0x5A6B7B, 0x082142)
+};
+static const unsigned short bgbB0[] = {	// Bionic Commando
+	PACK15_4(0xEFF7FF, 0xCEB5AD, 0xC62129, 0x390000),
+	PACK15_4(0xFFFFFF, 0xFFAD84, 0x5A3900, 0x000000),
+	PACK15_4(0xEFEFEF, 0xADA59C, 0x6B5A5A, 0x421008)
+};
+static const unsigned short bgbCV[] = {	// The Castlevania Adventure
+	PACK15_4(0xD6D6E7, 0x8CA5B5, 0x42526B, 0x001018),
+	PACK15_4(0xFFFFFF, 0xFFE784, 0xFF5242, 0x5A0000),
+	PACK15_4(0xFFFFFF, 0xF7EFCE, 0xF7DE9C, 0xF7B56B)
 };
 
 #undef PACK15_4
@@ -689,6 +727,8 @@ static const GbcPaletteEntry gbcDirPalettes[] = {
 };
 
 static const GbcPaletteEntry gbcTitlePalettes[] = {
+	{ "ADVENTURE ISLAND", bgbT3 },	// unofficial
+	{ "ADVENTUREISLAND2", bgbGQ },	// unofficial
 	{ "ALLEY WAY", p008 },
 	{ "ARNE'SMARIOLAND", pSML2013 },	// homebrew (Arne's Unnamed Graphics Hack)
 	{ "ASTEROIDS", p30E },	// unofficial ("ASTEROIDS/MISCMD" alt.)
@@ -697,12 +737,18 @@ static const GbcPaletteEntry gbcTitlePalettes[] = {
 	{ "BA.TOSHINDEN", p50F },
 	{ "BALLOON KID", p006 },
 	{ "BASEBALL", p503 },
+	{ "BATMAN", bgbBA },	// unofficial
+	{ "BATMAN ROJ", bgbB5 },	// unofficial
 	{ "BATTLETOADS", p312 },	// unofficial
+	{ "BIONIC-COMMANDO", bgbB0 },	// unofficial
 	{ "BOMBER BOY", p30F },	// unofficial ("DYNABLASTER" alt.)
 	{ "BOMBERMAN GB", p31C },	// unofficial ("WARIO BLAST" alt.)
+	{ "BOUKENJIMA2", bgbT3 },	// unofficial ("ADVENTURE ISLAND" alt.)
+	{ "BOUKENJIMA3", bgbGQ },	// unofficial ("ADVENTUREISLAND2" alt.)
 	{ "BOY AND BLOB GB1", p512 },
 	{ "BOY AND BLOB GB2", p512 },
 	{ "BT2RAGNAROKWORLD", p312 },
+	{ "CASTLEVANIA ADVE", bgbCV },	// unofficial
 	{ "CENTIPEDE", p31C },	// unofficial ("MILLI/CENTI/PEDE" alt.)
 	{ "DEFENDER/JOUST", p50F },
 	{ "DMG FOOTBALL", p30E },
@@ -711,6 +757,7 @@ static const GbcPaletteEntry gbcTitlePalettes[] = {
 	{ "DONKEYKONGLAND 2", p50C },
 	{ "DONKEYKONGLAND 3", p50C },
 	{ "DONKEYKONGLAND95", p501 },
+	{ "DORAKYURADENSE", bgbCV },	// unofficial ("CASTLEVANIA ADVE" alt.)
 	{ "DR.MARIO", p20B },
 	{ "DYNABLASTER", p30F },
 	{ "ELITE SOCCER", p502 },	// unofficial ("SOCCER" alt.)
@@ -829,6 +876,7 @@ static const GbcPaletteEntry sgbTitlePalettes[] = {
 	{ "BALLôôN KID", sgb1A },
 	{ "BASEBALL", sgb2G },
 	{ "CASINO FUNPAK", sgb1A },	// unofficial (Nintendo Power Issue #67)
+	{ "COOL SPOT", sgbQP },	// unofficial (Nintendo Power Issue #63)
 	{ "CONTRA ALIEN WAR", sgb1F },	// unofficial (Nintendo Power Issue #66)
 	{ "CONTRA SPIRITS", sgb1F },	// unofficial ("CONTRA ALIEN WAR" alt.)
 	{ "CUTTHROAT ISLAND", sgb3E },	// unofficial (Nintendo Power Issue #82)
