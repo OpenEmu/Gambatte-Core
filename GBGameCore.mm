@@ -351,20 +351,25 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
           Option(@"Game Boy Light", @"palette"),
           SeparatorItem(),
           Label(@"Monochrome Palettes"),
-          Option(@"SGB Greenscale", @"palette"),
           Option(@"SGB Grayscale", @"palette"),
+          Option(@"SGB Greenscale", @"palette"),
           Option(@"GBC Grayscale", @"palette"),
           SeparatorItem(),
           Label(@"Virtual Console"),
           Option(@"VC Greenscale", @"palette"),
           Option(@"VC Grayscale", @"palette"),
           SeparatorItem(),
+          Label(@"Lateral Thinking"),
+          Option(@"Game & Watch", @"palette"),
+          Option(@"Virtual Boy", @"palette"),
+          Option(@"WonderSwan", @"palette"),
+          SeparatorItem(),
           Label(@"Extra Palettes"),
-          Option(@"Analogue", @"palette"),
-          Option(@"GB Studio", @"palette"),
+          Option(@"Demo Vision", @"palette"),
+          Option(@"Wide-Boy", @"palette"),
+          Option(@"Portable Power", @"palette"),
           Option(@"Pocket Tales", @"palette"),
-          Option(@"VirtualBoy", @"palette"),
-          Option(@"WonderSwan", @"palette")
+          Option(@"GB Studio", @"palette")
         ];
 
         // Deep mutable copy
@@ -535,17 +540,19 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
       @"Dot Matrix"       : @"GB - DMG",
       @"Game Boy Pocket"  : @"GB - MGB",
       @"Game Boy Light"   : @"GB - Light",
-      @"SGB Greenscale"   : @"SGB - 4H",
       @"SGB Grayscale"    : @"SGB - 2H",
-      @"GBC Grayscale"    : @"GBC - Grayscale",
-      @"VirtualBoy"       : @"VirtualBoy",
+      @"SGB Greenscale"   : @"SGB - 4H",
+      @"GBC Grayscale"    : @"GBC - Gray",
       @"VC Greenscale"    : @"VC - Green",
       @"VC Grayscale"     : @"VC - Gray",
-      @"Analogue"         : @"Analogue",
-      @"GB Studio"        : @"GB Studio",
+      @"Game & Watch"     : @"GW Classic LCD",
+      @"Virtual Boy"      : @"Virtual Boy",
+      @"WonderSwan"       : @"WonderSwan",
+      @"Demo Vision"      : @"Demo Vision",
+      @"Wide-Boy"         : @"Wide-Boy",
+      @"Portable Power"   : @"Portable Power",
       @"Pocket Tales"     : @"Pocket Tales",
-      @"VirtualBoy"       : @"VirtualBoy",
-      @"WonderSwan"       : @"WonderSwan"
+      @"GB Studio"        : @"GB Studio"
     };
 
     palette = paletteNames[palette];

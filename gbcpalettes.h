@@ -59,7 +59,7 @@ static const unsigned short p006[] = {
 	PACK15_4(0xFFFFFF, 0xFF9C00, 0xFF0000, 0x000000)
 };
 
-static const unsigned short p007[] = {	// Orange | A + Down
+static const unsigned short p007[] = {	// Orange | Down + A
 	PACK15_4(0xFFFFFF, 0xFFFF00, 0xFF0000, 0x000000),
 	PACK15_4(0xFFFFFF, 0xFFFF00, 0xFF0000, 0x000000),
 	PACK15_4(0xFFFFFF, 0xFFFF00, 0xFF0000, 0x000000)
@@ -77,13 +77,13 @@ static const unsigned short p012[] = {	// Brown | Up
 	PACK15_4(0xFFFFFF, 0xFFAD63, 0x843100, 0x000000)
 };
 
-static const unsigned short p013[] = {	// Inverted | B + Right
+static const unsigned short p013[] = {	// Reverse | Right + B
 	PACK15_4(0x000000, 0x008484, 0xFFDE00, 0xFFFFFF),
 	PACK15_4(0x000000, 0x008484, 0xFFDE00, 0xFFFFFF),
 	PACK15_4(0x000000, 0x008484, 0xFFDE00, 0xFFFFFF)
 };
 
-static const unsigned short p016[] = {	// Grayscale | B + Left
+static const unsigned short p016[] = {	// Gray | Left + B
 	PACK15_4(0xFFFFFF, 0xA5A5A5, 0x525252, 0x000000),
 	PACK15_4(0xFFFFFF, 0xA5A5A5, 0x525252, 0x000000),
 	PACK15_4(0xFFFFFF, 0xA5A5A5, 0x525252, 0x000000)
@@ -209,13 +209,13 @@ static const unsigned short p312[] = {
 	PACK15_4(0xFFFFFF, 0x7BFF31, 0x008400, 0x000000)
 };
 
-static const unsigned short p319[] = {	// Dark Brown | B + Up
+static const unsigned short p319[] = {	// Dark Brown | Up + B
 	PACK15_4(0xFFE6C5, 0xCE9C84, 0x846B29, 0x5A3108),
 	PACK15_4(0xFFFFFF, 0xFFAD63, 0x843100, 0x000000),
 	PACK15_4(0xFFFFFF, 0xFFAD63, 0x843100, 0x000000)
 };
 
-static const unsigned short p31C[] = {	// Dark Green (GBC Default) | A + Right
+static const unsigned short p31C[] = {	// Dark Green (GBC Default) | Right + A
 	PACK15_4(0xFFFFFF, 0x7BFF31, 0x0063C5, 0x000000),
 	PACK15_4(0xFFFFFF, 0xFF8484, 0x943A3A, 0x000000),
 	PACK15_4(0xFFFFFF, 0xFF8484, 0x943A3A, 0x000000)
@@ -287,7 +287,7 @@ static const unsigned short p50C[] = {
 	PACK15_4(0xFFFFFF, 0x5ABDFF, 0xFF0000, 0x0000FF)
 };
 
-static const unsigned short p50D[] = {	// Dark Blue | A + Left
+static const unsigned short p50D[] = {	// Dark Blue | Left + A
 	PACK15_4(0xFFFFFF, 0x8C8CDE, 0x52528C, 0x000000),
 	PACK15_4(0xFFFFFF, 0xFF8484, 0x943A3A, 0x000000),
 	PACK15_4(0xFFFFFF, 0xFFAD63, 0x843100, 0x000000)
@@ -305,7 +305,7 @@ static const unsigned short p50F[] = {
 	PACK15_4(0xFFFFFF, 0x7BFF31, 0x008400, 0x000000)
 };
 
-static const unsigned short p510[] = {	// Red | A + Up
+static const unsigned short p510[] = {	// Red | Up + A
 	PACK15_4(0xFFFFFF, 0xFF8484, 0x943A3A, 0x000000),
 	PACK15_4(0xFFFFFF, 0x7BFF31, 0x008400, 0x000000),
 	PACK15_4(0xFFFFFF, 0x63A5FF, 0x0000FF, 0x000000)
@@ -341,7 +341,7 @@ static const unsigned short p518[] = {	// Blue | Left
 	PACK15_4(0xFFFFFF, 0x7BFF31, 0x008400, 0x000000)
 };
 
-static const unsigned short p51A[] = {	// Yellow | B + Down
+static const unsigned short p51A[] = {	// Yellow | Down + B
 	PACK15_4(0xFFFFFF, 0xFFFF00, 0x7B4A00, 0x000000),
 	PACK15_4(0xFFFFFF, 0x63A5FF, 0x0000FF, 0x000000),
 	PACK15_4(0xFFFFFF, 0x7BFF31, 0x008400, 0x000000)
@@ -354,249 +354,261 @@ static const unsigned short p51C[] = {
 };
 
 // Super Game Boy Palettes
-static const unsigned short sgb1A[] = {	// 1-A (SGB Default)
+static const unsigned short sgb1A[] = {	// 1-A (SGB Default | 7047-0470-4704)
 	PACK15_4(0xF8E8C8, 0xD89048, 0xA82820, 0x301850),
 	PACK15_4(0xF8E8C8, 0xD89048, 0xA82820, 0x301850),
 	PACK15_4(0xF8E8C8, 0xD89048, 0xA82820, 0x301850)
 };
 
-static const unsigned short sgb1B[] = {
+static const unsigned short sgb1B[] = {	// 7057-0570-5705
 	PACK15_4(0xD8D8C0, 0xC8B070, 0xB05010, 0x000000),
 	PACK15_4(0xD8D8C0, 0xC8B070, 0xB05010, 0x000000),
 	PACK15_4(0xD8D8C0, 0xC8B070, 0xB05010, 0x000000)
 };
 
-static const unsigned short sgb1C[] = {
+static const unsigned short sgb1C[] = {	// 7067-0670-6706
 	PACK15_4(0xF8C0F8, 0xE89850, 0x983860, 0x383898),
 	PACK15_4(0xF8C0F8, 0xE89850, 0x983860, 0x383898),
 	PACK15_4(0xF8C0F8, 0xE89850, 0x983860, 0x383898)
 };
 
-static const unsigned short sgb1D[] = {
+static const unsigned short sgb1D[] = {	// 7077-0770-7707
 	PACK15_4(0xF8F8A8, 0xC08048, 0xF80000, 0x501800),
 	PACK15_4(0xF8F8A8, 0xC08048, 0xF80000, 0x501800),
 	PACK15_4(0xF8F8A8, 0xC08048, 0xF80000, 0x501800)
 };
 
-static const unsigned short sgb1E[] = {
+static const unsigned short sgb1E[] = {	// 7087-0870-8708
 	PACK15_4(0xF8D8B0, 0x78C078, 0x688840, 0x583820),
 	PACK15_4(0xF8D8B0, 0x78C078, 0x688840, 0x583820),
 	PACK15_4(0xF8D8B0, 0x78C078, 0x688840, 0x583820)
 };
 
-static const unsigned short sgb1F[] = {
+static const unsigned short sgb1F[] = {	// 7097-0970-9709
 	PACK15_4(0xD8E8F8, 0xE08850, 0xA80000, 0x004010),
 	PACK15_4(0xD8E8F8, 0xE08850, 0xA80000, 0x004010),
 	PACK15_4(0xD8E8F8, 0xE08850, 0xA80000, 0x004010)
 };
 
-static const unsigned short sgb1G[] = {
+static const unsigned short sgb1G[] = {	// 7107-1071-0710
 	PACK15_4(0x000050, 0x00A0E8, 0x787800, 0xF8F858),
 	PACK15_4(0x000050, 0x00A0E8, 0x787800, 0xF8F858),
 	PACK15_4(0x000050, 0x00A0E8, 0x787800, 0xF8F858)
 };
 
-static const unsigned short sgb1H[] = {	// 1-H (SGB Brownscale)
+static const unsigned short sgb1H[] = {	// 7117-1171-1711
 	PACK15_4(0xF8E8E0, 0xF8B888, 0x804000, 0x301800),
 	PACK15_4(0xF8E8E0, 0xF8B888, 0x804000, 0x301800),
 	PACK15_4(0xF8E8E0, 0xF8B888, 0x804000, 0x301800)
 };
 
-static const unsigned short sgb2A[] = {
+static const unsigned short sgb2A[] = {	// 7127-1271-2712
 	PACK15_4(0xF0C8A0, 0xC08848, 0x287800, 0x000000),
 	PACK15_4(0xF0C8A0, 0xC08848, 0x287800, 0x000000),
 	PACK15_4(0xF0C8A0, 0xC08848, 0x287800, 0x000000)
 };
 
-static const unsigned short sgb2B[] = {
+static const unsigned short sgb2B[] = {	// 7137-1371-3713
 	PACK15_4(0xF8F8F8, 0xF8E850, 0xF83000, 0x500058),
 	PACK15_4(0xF8F8F8, 0xF8E850, 0xF83000, 0x500058),
 	PACK15_4(0xF8F8F8, 0xF8E850, 0xF83000, 0x500058)
 };
 
-static const unsigned short sgb2C[] = {
+static const unsigned short sgb2C[] = {	// 7147-1471-4714
 	PACK15_4(0xF8C0F8, 0xE88888, 0x7830E8, 0x282898),
 	PACK15_4(0xF8C0F8, 0xE88888, 0x7830E8, 0x282898),
 	PACK15_4(0xF8C0F8, 0xE88888, 0x7830E8, 0x282898)
 };
 
-static const unsigned short sgb2D[] = {
+static const unsigned short sgb2D[] = {	// 7157-1571-5715
 	PACK15_4(0xF8F8A0, 0x00F800, 0xF83000, 0x000050),
 	PACK15_4(0xF8F8A0, 0x00F800, 0xF83000, 0x000050),
 	PACK15_4(0xF8F8A0, 0x00F800, 0xF83000, 0x000050)
 };
 
-static const unsigned short sgb2E[] = {
+static const unsigned short sgb2E[] = {	// 7167-1671-6716
 	PACK15_4(0xF8C880, 0x90B0E0, 0x281060, 0x100810),
 	PACK15_4(0xF8C880, 0x90B0E0, 0x281060, 0x100810),
 	PACK15_4(0xF8C880, 0x90B0E0, 0x281060, 0x100810)
 };
 
-static const unsigned short sgb2F[] = {
+static const unsigned short sgb2F[] = {	// 7177-1771-7717
 	PACK15_4(0xD0F8F8, 0xF89050, 0xA00000, 0x180000),
 	PACK15_4(0xD0F8F8, 0xF89050, 0xA00000, 0x180000),
 	PACK15_4(0xD0F8F8, 0xF89050, 0xA00000, 0x180000)
 };
 
-static const unsigned short sgb2G[] = {
+static const unsigned short sgb2G[] = {	// 7187-1871-8718
 	PACK15_4(0x68B838, 0xE05040, 0xE0B880, 0x001800),
 	PACK15_4(0x68B838, 0xE05040, 0xE0B880, 0x001800),
 	PACK15_4(0x68B838, 0xE05040, 0xE0B880, 0x001800)
 };
 
-static const unsigned short sgb2H[] = {	// 2-H (SGB Grayscale)
+static const unsigned short sgb2H[] = {	// 2-H (SGB Grayscale | 7197-1971-9719)
 	PACK15_4(0xF8F8F8, 0xB8B8B8, 0x707070, 0x000000),
 	PACK15_4(0xF8F8F8, 0xB8B8B8, 0x707070, 0x000000),
 	PACK15_4(0xF8F8F8, 0xB8B8B8, 0x707070, 0x000000)
 };
 
-static const unsigned short sgb3A[] = {
+static const unsigned short sgb3A[] = {	// 7207-2072-0720
 	PACK15_4(0xF8D098, 0x70C0C0, 0xF86028, 0x304860),
 	PACK15_4(0xF8D098, 0x70C0C0, 0xF86028, 0x304860),
 	PACK15_4(0xF8D098, 0x70C0C0, 0xF86028, 0x304860)
 };
 
-static const unsigned short sgb3B[] = {
+static const unsigned short sgb3B[] = {	// 7217-2172-1721
 	PACK15_4(0xD8D8C0, 0xE08020, 0x005000, 0x001010),
 	PACK15_4(0xD8D8C0, 0xE08020, 0x005000, 0x001010),
 	PACK15_4(0xD8D8C0, 0xE08020, 0x005000, 0x001010)
 };
 
-static const unsigned short sgb3C[] = {
+static const unsigned short sgb3C[] = {	// 7227-2272-2722
 	PACK15_4(0xE0A8C8, 0xF8F878, 0x00B8F8, 0x202058),
 	PACK15_4(0xE0A8C8, 0xF8F878, 0x00B8F8, 0x202058),
 	PACK15_4(0xE0A8C8, 0xF8F878, 0x00B8F8, 0x202058)
 };
 
-static const unsigned short sgb3D[] = {
+static const unsigned short sgb3D[] = {	// 7237-2372-3723
 	PACK15_4(0xF0F8B8, 0xE0A878, 0x08C800, 0x000000),
 	PACK15_4(0xF0F8B8, 0xE0A878, 0x08C800, 0x000000),
 	PACK15_4(0xF0F8B8, 0xE0A878, 0x08C800, 0x000000)
 };
 
-static const unsigned short sgb3E[] = {
+static const unsigned short sgb3E[] = {	// 7247-2472-4724
 	PACK15_4(0xF8F8C0, 0xE0B068, 0xB07820, 0x504870),
 	PACK15_4(0xF8F8C0, 0xE0B068, 0xB07820, 0x504870),
 	PACK15_4(0xF8F8C0, 0xE0B068, 0xB07820, 0x504870)
 };
 
-static const unsigned short sgb3F[] = {
+static const unsigned short sgb3F[] = {	// 7257-2572-5725
 	PACK15_4(0x7878C8, 0xF868F8, 0xF8D000, 0x404040),
 	PACK15_4(0x7878C8, 0xF868F8, 0xF8D000, 0x404040),
 	PACK15_4(0x7878C8, 0xF868F8, 0xF8D000, 0x404040)
 };
 
-static const unsigned short sgb3G[] = {
+static const unsigned short sgb3G[] = {	// 7267-2672-6726
 	PACK15_4(0x60D850, 0xF8F8F8, 0xC83038, 0x380000),
 	PACK15_4(0x60D850, 0xF8F8F8, 0xC83038, 0x380000),
 	PACK15_4(0x60D850, 0xF8F8F8, 0xC83038, 0x380000)
 };
 
-static const unsigned short sgb3H[] = {	// 3-H (SGB Vivid Greenscale)
+static const unsigned short sgb3H[] = {	// 7277-2772-7727
 	PACK15_4(0xE0F8A0, 0x78C838, 0x488818, 0x081800),
 	PACK15_4(0xE0F8A0, 0x78C838, 0x488818, 0x081800),
 	PACK15_4(0xE0F8A0, 0x78C838, 0x488818, 0x081800)
 };
 
-static const unsigned short sgb4A[] = {
+static const unsigned short sgb4A[] = {	// 7287-2872-8728
 	PACK15_4(0xF0A868, 0x78A8F8, 0xD000D0, 0x000078),
 	PACK15_4(0xF0A868, 0x78A8F8, 0xD000D0, 0x000078),
 	PACK15_4(0xF0A868, 0x78A8F8, 0xD000D0, 0x000078)
 };
 
-static const unsigned short sgb4B[] = {
+static const unsigned short sgb4B[] = {	// 7297-2972-9729
 	PACK15_4(0xF0E8F0, 0xE8A060, 0x407838, 0x180808),
 	PACK15_4(0xF0E8F0, 0xE8A060, 0x407838, 0x180808),
 	PACK15_4(0xF0E8F0, 0xE8A060, 0x407838, 0x180808)
 };
 
-static const unsigned short sgb4C[] = {
+static const unsigned short sgb4C[] = {	// 7307-3073-0730
 	PACK15_4(0xF8E0E0, 0xD8A0D0, 0x98A0E0, 0x080000),
 	PACK15_4(0xF8E0E0, 0xD8A0D0, 0x98A0E0, 0x080000),
 	PACK15_4(0xF8E0E0, 0xD8A0D0, 0x98A0E0, 0x080000)
 };
 
-static const unsigned short sgb4D[] = {
+static const unsigned short sgb4D[] = {	// 7317-3173-1731
 	PACK15_4(0xF8F8B8, 0x90C8C8, 0x486878, 0x082048),
 	PACK15_4(0xF8F8B8, 0x90C8C8, 0x486878, 0x082048),
 	PACK15_4(0xF8F8B8, 0x90C8C8, 0x486878, 0x082048)
 };
 
-static const unsigned short sgb4E[] = {
+static const unsigned short sgb4E[] = {	// 7327-3273-2732
 	PACK15_4(0xF8D8A8, 0xE0A878, 0x785888, 0x002030),
 	PACK15_4(0xF8D8A8, 0xE0A878, 0x785888, 0x002030),
 	PACK15_4(0xF8D8A8, 0xE0A878, 0x785888, 0x002030)
 };
 
-static const unsigned short sgb4F[] = {
+static const unsigned short sgb4F[] = {	// 7337-3373-3733
 	PACK15_4(0xB8D0D0, 0xD880D8, 0x8000A0, 0x380000),
 	PACK15_4(0xB8D0D0, 0xD880D8, 0x8000A0, 0x380000),
 	PACK15_4(0xB8D0D0, 0xD880D8, 0x8000A0, 0x380000)
 };
 
-static const unsigned short sgb4G[] = {
+static const unsigned short sgb4G[] = {	// 7347-3473-4734
 	PACK15_4(0xB0E018, 0xB82058, 0x281000, 0x008060),
 	PACK15_4(0xB0E018, 0xB82058, 0x281000, 0x008060),
 	PACK15_4(0xB0E018, 0xB82058, 0x281000, 0x008060)
 };
 
-static const unsigned short sgb4H[] = {	// 4-H (SGB DMG-esque)
+static const unsigned short sgb4H[] = {	// 4-H (SGB Greenscale | RGB208 | 7357-3573-5735)
 	PACK15_4(0xF8F8C8, 0xB8C058, 0x808840, 0x405028),
 	PACK15_4(0xF8F8C8, 0xB8C058, 0x808840, 0x405028),
 	PACK15_4(0xF8F8C8, 0xB8C058, 0x808840, 0x405028)
 };
 
 // Virtual Console
-static const unsigned short vcGreen[] = {
+static const unsigned short vcGreen[] = {	// DMG_COLOR
 	PACK15_4(0xBDFF21, 0x9CEF29, 0x5A8C42, 0x4A4A4A),
 	PACK15_4(0xBDFF21, 0x9CEF29, 0x5A8C42, 0x4A4A4A),
 	PACK15_4(0xBDFF21, 0x9CEF29, 0x5A8C42, 0x4A4A4A)
 };
 
 static const unsigned short vcGreenAlt[] = {	// inspired by Dream Land GB (Super Smash Bros. Ultimate)
-	PACK15_4(0xFBFB7C, 0xE0F03E, 0x99B41F, 0x5D5D1F),
-	PACK15_4(0xFBFB7C, 0xE0F03E, 0x99B41F, 0x5D5D1F),
-	PACK15_4(0xFBFB7C, 0xE0F03E, 0x99B41F, 0x5D5D1F)
+	PACK15_4(0xF6FF70, 0xB9D03A, 0x788B1D, 0x48530E),
+	PACK15_4(0xF6FF70, 0xB9D03A, 0x788B1D, 0x48530E),
+	PACK15_4(0xF6FF70, 0xB9D03A, 0x788B1D, 0x48530E)
 };
 
-static const unsigned short vcGray[] = {
+static const unsigned short vcGray[] = {	// DMG_COLOR_GRAY
 	PACK15_4(0xCECEAD, 0xA5A58C, 0x6B6B52, 0x292919),
 	PACK15_4(0xCECEAD, 0xA5A58C, 0x6B6B52, 0x292919),
 	PACK15_4(0xCECEAD, 0xA5A58C, 0x6B6B52, 0x292919)
 };
 
-static const unsigned short vcGrayAlt[] = {	// Kirby's Dream Collection
+static const unsigned short vcGrayAlt[] = {	// DMG_COLOR_COLOR (Kirby's Dream Collection)
 	PACK15_4(0xBDBD9C, 0x8C8C73, 0x5A5A4A, 0x313119),
 	PACK15_4(0xBDBD9C, 0x8C8C73, 0x5A5A4A, 0x313119),
 	PACK15_4(0xBDBD9C, 0x8C8C73, 0x5A5A4A, 0x313119)
 };
 
-// Special Palettes <https://www.deviantart.com/thewolfbunny/gallery/69987002/game-boy-palettes>
-
-static const unsigned short twb799510[] = {	// Squidlit
-	PACK15_4(0x9CBE0C, 0x6E870A, 0x2C6234, 0x0C360C),
-	PACK15_4(0x9CBE0C, 0x6E870A, 0x2C6234, 0x0C360C),
-	PACK15_4(0x9CBE0C, 0x6E870A, 0x2C6234, 0x0C360C)
+static const unsigned short vcSaGa[] = {	// Collection of SaGa: Final Fantasy Legend
+	PACK15_4(0xB2C0A8, 0x769A67, 0x345D51, 0x041820),
+	PACK15_4(0xB2C0A8, 0x769A67, 0x345D51, 0x041820),
+	PACK15_4(0xB2C0A8, 0x769A67, 0x345D51, 0x041820)
 };
 
-static const unsigned short twbAMA[] = {	// Superball Ivory (Super Mario Maker 2)
-	PACK15_4(0xEEF0BC, 0xBCBC8A, 0x828250, 0x646432),
-	PACK15_4(0xEEF0BC, 0xBCBC8A, 0x828250, 0x646432),
-	PACK15_4(0xEEF0BC, 0xBCBC8A, 0x828250, 0x646432)
+// Gunpei Yokoi Palettes
+static const unsigned short pDemoVision[] = {	// Demo Vision
+	PACK15_4(0xD9E09C, 0xA7BE03, 0x5C7114, 0x0F4B0E),
+	PACK15_4(0xD9E09C, 0xA7BE03, 0x5C7114, 0x0F4B0E),
+	PACK15_4(0xD9E09C, 0xA7BE03, 0x5C7114, 0x0F4B0E)
 };
 
-static const unsigned short twbSWJ[] = {	// WonderSwan Monochrome (because Gunpei Yokoi)
+static const unsigned short twbGW[] = {	// Game & Watch Classic LCD
+	PACK15_4(0xC6CBAD, 0x979B84, 0x545F51, 0x22231E),
+	PACK15_4(0xC6CBAD, 0x979B84, 0x545F51, 0x22231E),
+	PACK15_4(0xC6CBAD, 0x979B84, 0x545F51, 0x22231E)
+};
+
+static const unsigned short twbSWJ[] = {	// WonderSwan Monochrome
 	PACK15_4(0xFEFEFE, 0xC2C2C2, 0x686868, 0x1D1D1D),
 	PACK15_4(0xFEFEFE, 0xC2C2C2, 0x686868, 0x1D1D1D),
 	PACK15_4(0xFEFEFE, 0xC2C2C2, 0x686868, 0x1D1D1D)
 };
 
-static const unsigned short twbVUE[] = {	// VirtualBoy
+static const unsigned short twbVUE[] = {	// Virtual Boy
 	PACK15_4(0xFF0000, 0xAA0000, 0x550000, 0x000000),
 	PACK15_4(0xFF0000, 0xAA0000, 0x550000, 0x000000),
 	PACK15_4(0xFF0000, 0xAA0000, 0x550000, 0x000000)
 };
 
+static const unsigned short twbWB[] = {	// Giga Kiwi DMG (Wide-Boy / Kiosk)
+	PACK15_4(0xD0E040, 0xA0A830, 0x607028, 0x384828),
+	PACK15_4(0xD0E040, 0xA0A830, 0x607028, 0x384828),
+	PACK15_4(0xD0E040, 0xA0A830, 0x607028, 0x384828)
+};
+
+// Additional Super Game Boy Enhanced Palettes
 static const unsigned short sgbACR[] = {	// Conker's Pocket Tales (TheWolfBunny)
 	PACK15_4(0xD0D860, 0x88A000, 0x385000, 0x000000),
 	PACK15_4(0xD0D860, 0x88A000, 0x385000, 0x000000),
@@ -615,7 +627,25 @@ static const unsigned short sgbAPS[] = {	// Pokémon Yellow <https://github.com/
 	PACK15_4(0xFFFFF7, 0xFFF7B5, 0xDE8484, 0x313131)
 };
 
-static const unsigned short sgbQP[] = {	// Cool Spot (Nintendo Power #63)
+static const unsigned short sgbAW[] = {	// Alleyway (nensondubois improvement | 2997-1273-2810)
+	PACK15_4(0x4F604F, 0xC0884F, 0x785888, 0x301850),
+	PACK15_4(0x4F604F, 0xC0884F, 0x785888, 0x301850),
+	PACK15_4(0x4F604F, 0xC0884F, 0x785888, 0x301850)
+};
+
+static const unsigned short sgbAYL[] = {	// Tetris Attack (nensondubois improvement)
+	PACK15_4(0xFFFFE5, 0x3AF701, 0xAD04EE, 0x850632),
+	PACK15_4(0xFFFFE5, 0x3AF701, 0xAD04EE, 0x850632),
+	PACK15_4(0xFFFFE5, 0x3AF701, 0xAD04EE, 0x850632)
+};
+
+static const unsigned short sgbQD[] = {	// Donkey Kong '94 (TheWolfBunny)
+	PACK15_4(0xC0F0F8, 0xD89078, 0x805850, 0x204008),
+	PACK15_4(0xC0F0F8, 0xD89078, 0x805850, 0x204008),
+	PACK15_4(0xC0F0F8, 0xD89078, 0x805850, 0x204008)
+};
+
+static const unsigned short sgbQP[] = {	// Cool Spot (Nintendo Power #63 | 2421-9219-9243)
 	PACK15_4(0xFFF8FF, 0xFF0000, 0x009800, 0x000000),
 	PACK15_4(0xFFF8FF, 0xFF0000, 0x009800, 0x000000),
 	PACK15_4(0xFFF8FF, 0xFF0000, 0x009800, 0x000000)
@@ -625,6 +655,12 @@ static const unsigned short sgbWM[] = {	// Mega Man World V (TheWolfBunny)
 	PACK15_4(0xD0D0D0, 0x70A0E0, 0x406890, 0x082030),
 	PACK15_4(0xD0D0D0, 0x70A0E0, 0x406890, 0x082030),
 	PACK15_4(0xD0D0D0, 0x70A0E0, 0x406890, 0x082030)
+};
+
+static const unsigned short sgbYT[] = {	// Donkey Kong Land
+	PACK15_4(0x9AAD00, 0x5E7B00, 0x315500, 0x0F2A00),
+	PACK15_4(0x9AAD00, 0x5E7B00, 0x315500, 0x0F2A00),
+	PACK15_4(0x9AAD00, 0x5E7B00, 0x315500, 0x0F2A00)
 };
 
 static const unsigned short sgbZL[] = {	// Link's Awakening DX (TheWolfBunny)
@@ -652,13 +688,7 @@ static const unsigned short pExt3[] = {
 	PACK15_4(0xF8F8F8, 0xD7543C, 0x7D3023, 0x000000)
 };
 
-static const unsigned short pAnalogue[] = {
-	PACK15_4(0xE0F8CF, 0x86C06C, 0x306850, 0x071821),
-	PACK15_4(0xE0F8CF, 0x86C06C, 0x306850, 0x071821),
-	PACK15_4(0xE0F8CF, 0x86C06C, 0x306850, 0x071821)
-};
-
-static const unsigned short pGBStudio[] = {	// GBC
+static const unsigned short pGBStudio[] = {	// GB Studio
 	PACK15_4(0xE8F8E0, 0xB0F088, 0x509878, 0x202850),
 	PACK15_4(0xE8F8E0, 0xB0F088, 0x509878, 0x202850),
 	PACK15_4(0xE8F8E0, 0xB0F088, 0x509878, 0x202850)
@@ -670,7 +700,7 @@ static const unsigned short pSML2013[] = {	// Arne's Unnamed Graphics Hack (Supe
 	PACK15_4(0x000000, 0xE0C048, 0xB05030, 0x283018)
 };
 
-// Goomba Color & BGB
+// GBC Special, from Goomba Color & BGB
 static const unsigned short bgbT3[] = {	// Adventure Island
 	PACK15_4(0xFFFFFF, 0x9CB5FF, 0x319400, 0x000000),
 	PACK15_4(0xFFFFDE, 0xEFC673, 0xFF6352, 0x000029),
@@ -709,26 +739,29 @@ static const unsigned short bgbCV[] = {	// The Castlevania Adventure
 struct GbcPaletteEntry { const char *title; const unsigned short *p; };
 
 static const GbcPaletteEntry gbcDirPalettes[] = {
-	{ "Analogue", pAnalogue },	// Analogue Pocket
+	{ "Demo Vision", pDemoVision },
 	{ "GB - DMG", gbdmg },	// GB Pea Soup Green
 	{ "GB - Light", gblit },	// GB Light Aquamarine
 	{ "GB - MGB", gbpoc },	// GB Pocket Newsprint
-	{ "GB Studio", pGBStudio },	// GB Studio
-	{ "GBC - Dark Green", p31C },	// A + Right (default GBC)
-	{ "GBC - Grayscale", p016 },	// B + Left
+	{ "GB Studio", pGBStudio },
+	{ "GBC - Dark Green", p31C },	// Right + A (default GBC)
+	{ "GBC - Gray", p016 },	// Left + B
+	{ "GW Classic LCD", twbGW },
 	{ "Pocket Tales", sgbACR },	// Conker's Pocket Tales
+	{ "Portable Power", sgbYT },	// Donkey Kong Land
 	{ "SGB - 1A", sgb1A },	// 1-A (default SGB)
 	{ "SGB - 2H", sgb2H },	// SGB Grayscale
 	{ "SGB - 4H", sgb4H },	// SGB Greenscale
-	{ "VC - Gray", vcGrayAlt },	// Virtual Console Grayscale
+	{ "VC - Gray", vcGrayAlt },	// Virtual Console Grayscale (Kirby's Dream Collection)
 	{ "VC - Green", vcGreen },	// Virtual Console Greenscale
-	{ "VirtualBoy", twbVUE },	// VirtualBoy
+	{ "Virtual Boy", twbVUE },
+	{ "Wide-Boy", twbWB },	// Giga Kiwi DMG
 	{ "WonderSwan", twbSWJ }
 };
 
 static const GbcPaletteEntry gbcTitlePalettes[] = {
-	{ "ADVENTURE ISLAND", bgbT3 },	// unofficial
-	{ "ADVENTUREISLAND2", bgbGQ },	// unofficial
+	{ "ADVENTURE ISLAND", bgbT3 },	// unofficial (BGB)
+	{ "ADVENTUREISLAND2", bgbGQ },	// unofficial (BGB)
 	{ "ALLEY WAY", p008 },
 	{ "ARNE'SMARIOLAND", pSML2013 },	// homebrew (Arne's Unnamed Graphics Hack)
 	{ "ASTEROIDS", p30E },	// unofficial ("ASTEROIDS/MISCMD" alt.)
@@ -737,18 +770,18 @@ static const GbcPaletteEntry gbcTitlePalettes[] = {
 	{ "BA.TOSHINDEN", p50F },
 	{ "BALLOON KID", p006 },
 	{ "BASEBALL", p503 },
-	{ "BATMAN", bgbBA },	// unofficial
-	{ "BATMAN ROJ", bgbB5 },	// unofficial
+	{ "BATMAN", bgbBA },	// unofficial (BGB)
+	{ "BATMAN ROJ", bgbB5 },	// unofficial (BGB)
 	{ "BATTLETOADS", p312 },	// unofficial
-	{ "BIONIC-COMMANDO", bgbB0 },	// unofficial
+	{ "BIONIC-COMMANDO", bgbB0 },	// unofficial (BGB)
 	{ "BOMBER BOY", p30F },	// unofficial ("DYNABLASTER" alt.)
 	{ "BOMBERMAN GB", p31C },	// unofficial ("WARIO BLAST" alt.)
-	{ "BOUKENJIMA2", bgbT3 },	// unofficial ("ADVENTURE ISLAND" alt.)
-	{ "BOUKENJIMA3", bgbGQ },	// unofficial ("ADVENTUREISLAND2" alt.)
+	{ "BOUKENJIMA2", bgbT3 },	// unofficial (BGB - "ADVENTURE ISLAND" alt.)
+	{ "BOUKENJIMA3", bgbGQ },	// unofficial (BGB - "ADVENTUREISLAND2" alt.)
 	{ "BOY AND BLOB GB1", p512 },
 	{ "BOY AND BLOB GB2", p512 },
 	{ "BT2RAGNAROKWORLD", p312 },
-	{ "CASTLEVANIA ADVE", bgbCV },	// unofficial
+	{ "CASTLEVANIA ADVE", bgbCV },	// unofficial (BGB)
 	{ "CENTIPEDE", p31C },	// unofficial ("MILLI/CENTI/PEDE" alt.)
 	{ "DEFENDER/JOUST", p50F },
 	{ "DMG FOOTBALL", p30E },
@@ -757,7 +790,7 @@ static const GbcPaletteEntry gbcTitlePalettes[] = {
 	{ "DONKEYKONGLAND 2", p50C },
 	{ "DONKEYKONGLAND 3", p50C },
 	{ "DONKEYKONGLAND95", p501 },
-	{ "DORAKYURADENSE", bgbCV },	// unofficial ("CASTLEVANIA ADVE" alt.)
+	{ "DORAKYURADENSE", bgbCV },	// unofficial (BGB - "CASTLEVANIA ADVE" alt.)
 	{ "DR.MARIO", p20B },
 	{ "DYNABLASTER", p30F },
 	{ "ELITE SOCCER", p502 },	// unofficial ("SOCCER" alt.)
@@ -871,18 +904,20 @@ static const GbcPaletteEntry gbcTitlePalettes[] = {
 };
 
 static const GbcPaletteEntry sgbTitlePalettes[] = {
-	{ "ALLEY WAY", sgb3F },
-	{ "BALLOON KID", sgb1A },	// unofficial ("BALLôôN KID" alt.)
+	{ "ALLEY WAY", sgbAW },	// unofficial improvement by nensondubois, really sgb3F
+	{ "ARNE'SMARIOLAND", sgb1F },	// homebrew (Arne's Unnamed Graphics Hack)
 	{ "BALLôôN KID", sgb1A },
+	{ "BALLOON KID", sgb1A },	// unofficial ("BALLôôN KID" alt.)
 	{ "BASEBALL", sgb2G },
 	{ "CASINO FUNPAK", sgb1A },	// unofficial (Nintendo Power Issue #67)
-	{ "COOL SPOT", sgbQP },	// unofficial (Nintendo Power Issue #63)
 	{ "CONTRA ALIEN WAR", sgb1F },	// unofficial (Nintendo Power Issue #66)
 	{ "CONTRA SPIRITS", sgb1F },	// unofficial ("CONTRA ALIEN WAR" alt.)
+	{ "COOL SPOT", sgbQP },	// unofficial (Nintendo Power Issue #63)
 	{ "CUTTHROAT ISLAND", sgb3E },	// unofficial (Nintendo Power Issue #82)
 	{ "DMG FOOTBALL", sgb4B },	// unofficial (nensondubois)
+	{ "DONKEY KONG", sgbQD },	// unofficial (TheWolfBunny - Donkey Kong '94')
 	{ "DR.MARIO", sgb3B },
-	{ "F1RACE", sgb4B },	// unofficial improvement, really sgb4F
+	{ "F1RACE", sgb4B },	// unofficial improvement by nensondubois, really sgb4F
 	{ "FRANK THOMAS BB", sgb1B },	// unofficial (Nintendo Power Issue #80)
 	{ "GBWARS", sgb3E },
 	{ "GBWARST", sgb3E },	// unofficial ("GBWARS" alt.)
@@ -900,11 +935,11 @@ static const GbcPaletteEntry sgbTitlePalettes[] = {
 	{ "LUNAR CHASE", sgb4D },	// unofficial ("X" alt.)
 	{ "MARIO & YOSHI", sgb2D },
 	{ "MARIOLAND2", sgb3D },
-	{ "MEGA MAN 2", sgbWM },	//  unofficial (SGB)
+	{ "MEGA MAN 2", sgbWM },	// unofficial (SGB)
 	{ "MEGAMAN", sgbWM },	// unofficial (SGB)
-	{ "MEGAMAN3", sgbWM },	//  unofficial (SGB)
+	{ "MEGAMAN3", sgbWM },	// unofficial (SGB)
 	{ "MEGAMAN4", sgbWM },	// unofficial (SGB)
-	{ "MEGAMAN5", sgbWM },	// Super Game Boy
+	{ "MEGAMAN5", sgbWM },	// unofficial (TheWolfBunny - Mega Man World V)
 	{ "METROID2", sgb4G },
 	{ "MORTAL KOMBAT", sgb4D },	// unofficial ("MORTAL KOMBAT II" alt.)
 	{ "MORTAL KOMBAT 3", sgb1B },	// unofficial (Nintendo Power Issue #79)
@@ -926,8 +961,11 @@ static const GbcPaletteEntry sgbTitlePalettes[] = {
 	{ "ROCKMAN WORLD2", sgbWM },	// unofficial (SGB)
 	{ "ROCKMANWORLD3", sgbWM },	// unofficial (SGB)
 	{ "ROCKMANWORLD4", sgbWM },	// unofficial (SGB)
-	{ "ROCKMANWORLD5", sgbWM },	// Super Game Boy
-	{ "RVT", sgb4B },	// unofficial (Nintendo Power Issue #63)
+	{ "ROCKMANWORLD5", sgbWM },	// unofficial (TheWolfBunny - Rockman World V)
+	{ "RVT", sgb4B },	// unofficial (Nintendo Power Issue #63 - Robocop Versus The Terminator)
+	{ "SAGA", vcSaGa },	// unofficial (Collection of SaGa: Final Fantasy Legend)
+	{ "SAGA2", vcSaGa },	// unofficial (Collection of SaGa: Final Fantasy Legend)
+	{ "SAGA3", vcSaGa },	// unofficial (Collection of SaGa: Final Fantasy Legend)
 	{ "SOLARSTRIKER", sgb1G },
 	{ "SPACE INVADERS", sgb4D },	// unofficial (Nintendo Power Issue #62)
 	{ "SUPER MARIOLAND", sgb1F },
@@ -937,6 +975,7 @@ static const GbcPaletteEntry sgbTitlePalettes[] = {
 	{ "TEEN JEOPARDY!", sgb2F },	// unofficial ("JEOPARDY SPORTS" alt.)
 	{ "TENNIS", sgb3G },
 	{ "TETRIS", sgb3A },
+	{ "TETRIS ATTACK", sgbAYL },	// unofficial (nensondubois)
 	{ "TETRIS FLASH", sgb2B },	// unofficial ("TETRIS2" alt.)
 	{ "TETRIS2", sgb2B },	// unofficial (nensondubois)
 	{ "THE GETAWAY", sgb1B },	// unofficial (Nintendo Power Issue #80)
@@ -949,8 +988,9 @@ static const GbcPaletteEntry sgbTitlePalettes[] = {
 	{ "YOGIS GOLDRUSH", sgb3B },	// unofficial (Nintendo Power Issue #65)
 	{ "YOSHI'S COOKIE", sgb1D },
 	{ "YOSSY NO COOKIE", sgb1D },
+	{ "YOSSY NO PANEPON", sgbAYL },	// unofficial "Tetris Attack" alt. (nensondubois)
 	{ "YOSSY NO TAMAGO", sgb2D },
-	{ "ZELDA", sgbZL }	// unofficial (DX alt.)
+	{ "ZELDA", sgbZL }	// unofficial (TheWolfBunny - The Legend of Zelda: Link's Awakening DX)
 };
 
 static inline std::size_t gbcDirPalettesSize() { return (sizeof gbcDirPalettes) / (sizeof gbcDirPalettes[0]); }
