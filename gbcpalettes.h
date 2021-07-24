@@ -578,10 +578,10 @@ static const unsigned short vcSaGa[] = {	// Collection of SaGa: Final Fantasy Le
 };
 
 // Gunpei Yokoi Palettes
-static const unsigned short pDemoVision[] = {	// Demo Vision
-	PACK15_4(0xD9E09C, 0xA7BE03, 0x5C7114, 0x0F4B0E),
-	PACK15_4(0xD9E09C, 0xA7BE03, 0x5C7114, 0x0F4B0E),
-	PACK15_4(0xD9E09C, 0xA7BE03, 0x5C7114, 0x0F4B0E)
+static const unsigned short pDemoVision[] = {	// Demo Vision (.db $38,$28,$18,$09, ran through NES Classic Mini)
+	PACK15_4(0xDADB9C, 0xA8B100, 0x5D6913, 0x0D410E),
+	PACK15_4(0xDADB9C, 0xA8B100, 0x5D6913, 0x0D410E),
+	PACK15_4(0xDADB9C, 0xA8B100, 0x5D6913, 0x0D410E)
 };
 
 static const unsigned short twbGW[] = {	// Game & Watch Classic LCD
