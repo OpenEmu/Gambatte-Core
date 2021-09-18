@@ -584,6 +584,18 @@ static const unsigned short pDemoVision[] = {	// Demo Vision (.db $38,$28,$18,$0
 	PACK15_4(0xDADB9C, 0xA8B100, 0x5D6913, 0x0D410E)
 };
 
+static const unsigned short pWideBoyGrayscale[] = {	// Wide-Boy Grayscale (.db $30,$10,$00,$0F, ran through NES Classic Mini)
+	PACK15_4(0xFCFCFC, 0xAAAAAA, 0x616161, 0x000000),
+	PACK15_4(0xFCFCFC, 0xAAAAAA, 0x616161, 0x000000),
+	PACK15_4(0xFCFCFC, 0xAAAAAA, 0x616161, 0x000000)
+};
+
+static const unsigned short pWideBoyGreenscale[] = {	// Wide-Boy Greenscale (.db $38,$28,$18,$08, ran through NES Classic Mini)
+	PACK15_4(0xDADB9C, 0xA8B100, 0x5D6913, 0x21350C),
+	PACK15_4(0xDADB9C, 0xA8B100, 0x5D6913, 0x21350C),
+	PACK15_4(0xDADB9C, 0xA8B100, 0x5D6913, 0x21350C)
+};
+
 static const unsigned short twbGW[] = {	// Game & Watch Classic LCD
 	PACK15_4(0xC6CBAD, 0x979B84, 0x545F51, 0x22231E),
 	PACK15_4(0xC6CBAD, 0x979B84, 0x545F51, 0x22231E),
@@ -609,10 +621,10 @@ static const unsigned short twbWB[] = {	// Giga Kiwi DMG (Wide-Boy / Kiosk)
 };
 
 // Additional Super Game Boy Enhanced Palettes
-static const unsigned short sgbACR[] = {	// Conker's Pocket Tales (TheWolfBunny)
-	PACK15_4(0xD0D860, 0x88A000, 0x385000, 0x000000),
-	PACK15_4(0xD0D860, 0x88A000, 0x385000, 0x000000),
-	PACK15_4(0xD0D860, 0x88A000, 0x385000, 0x000000)
+static const unsigned short sgbACR[] = {	// Conker's Pocket Tales
+	PACK15_4(0xD6DE63, 0x8CA500, 0x3A5200, 0x000000),
+	PACK15_4(0xD6DE63, 0x8CA500, 0x3A5200, 0x000000),
+	PACK15_4(0xD6DE63, 0x8CA500, 0x3A5200, 0x000000)
 };
 
 static const unsigned short sgbAP[] = {	// Pokémon <https://github.com/pret/pokered/blob/master/data/sgb/sgb_palettes.asm>
@@ -634,9 +646,9 @@ static const unsigned short sgbAW[] = {	// Alleyway (nensondubois improvement | 
 };
 
 static const unsigned short sgbAYL[] = {	// Tetris Attack (nensondubois improvement)
-	PACK15_4(0xFFFFE5, 0x3AF701, 0xAD04EE, 0x850632),
-	PACK15_4(0xFFFFE5, 0x3AF701, 0xAD04EE, 0x850632),
-	PACK15_4(0xFFFFE5, 0x3AF701, 0xAD04EE, 0x850632)
+	PACK15_4(0xFFFFE6, 0x52F708, 0xB510EF, 0x94104A),
+	PACK15_4(0xFFFFE6, 0x52F708, 0xB510EF, 0x94104A),
+	PACK15_4(0xFFFFE6, 0x52F708, 0xB510EF, 0x94104A)
 };
 
 static const unsigned short sgbQD[] = {	// Donkey Kong '94 (TheWolfBunny)
@@ -651,22 +663,22 @@ static const unsigned short sgbQP[] = {	// Cool Spot (Nintendo Power #63 | 2421-
 	PACK15_4(0xFFF8FF, 0xFF0000, 0x009800, 0x000000)
 };
 
-static const unsigned short sgbWM[] = {	// Mega Man World V (TheWolfBunny)
-	PACK15_4(0xD0D0D0, 0x70A0E0, 0x406890, 0x082030),
-	PACK15_4(0xD0D0D0, 0x70A0E0, 0x406890, 0x082030),
-	PACK15_4(0xD0D0D0, 0x70A0E0, 0x406890, 0x082030)
+static const unsigned short sgbWM[] = {	// Mega Man World V
+	PACK15_4(0xD6D6D6, 0x73A5E6, 0x426B94, 0x082131),
+	PACK15_4(0xD6D6D6, 0x73A5E6, 0x426B94, 0x082131),
+	PACK15_4(0xD6D6D6, 0x73A5E6, 0x426B94, 0x082131)
 };
 
 static const unsigned short sgbYT[] = {	// Donkey Kong Land
-	PACK15_4(0x9AAD00, 0x5E7B00, 0x315500, 0x0F2A00),
-	PACK15_4(0x9AAD00, 0x5E7B00, 0x315500, 0x0F2A00),
-	PACK15_4(0x9AAD00, 0x5E7B00, 0x315500, 0x0F2A00)
+	PACK15_4(0xA5B500, 0x738C00, 0x4A6B00, 0x214200),
+	PACK15_4(0xA5B500, 0x738C00, 0x4A6B00, 0x214200),
+	PACK15_4(0xA5B500, 0x738C00, 0x4A6B00, 0x214200)
 };
 
-static const unsigned short sgbZL[] = {	// Link's Awakening DX (TheWolfBunny)
-	PACK15_4(0xF8F8B0, 0x78C078, 0x688840, 0x583820),
-	PACK15_4(0xF8F8B0, 0x78C078, 0x688840, 0x583820),
-	PACK15_4(0xF8F8B0, 0x78C078, 0x688840, 0x583820)
+static const unsigned short sgbZL[] = {	// Link's Awakening DX
+	PACK15_4(0xFFFFB5, 0x7BC57B, 0x6B8C42, 0x5A3A21),
+	PACK15_4(0xFFFFB5, 0x7BC57B, 0x6B8C42, 0x5A3A21),
+	PACK15_4(0xFFFFB5, 0x7BC57B, 0x6B8C42, 0x5A3A21)
 };
 
 // Extra Palettes
@@ -730,6 +742,11 @@ static const unsigned short bgbCV[] = {	// The Castlevania Adventure
 	PACK15_4(0xD6D6E7, 0x8CA5B5, 0x42526B, 0x001018),
 	PACK15_4(0xFFFFFF, 0xFFE784, 0xFF5242, 0x5A0000),
 	PACK15_4(0xFFFFFF, 0xF7EFCE, 0xF7DE9C, 0xF7B56B)
+};
+static const unsigned short bgbUF[] = {	// The Smurfs
+	PACK15_4(0xEFFFF1, 0x7BE75A, 0x3B9C18, 0x1D2A1F),
+	PACK15_4(0xEFEFFF, 0x5A8CE7, 0x184A9C, 0x000000),
+	PACK15_4(0xFFEFEF, 0xDC714B, 0xAD1018, 0x000000)
 };
 
 #undef PACK15_4
@@ -864,6 +881,7 @@ static const GbcPaletteEntry gbcTitlePalettes[] = {
 	{ "ROCKMANWORLD4", p50F },	// unofficial
 	{ "ROCKMANWORLD5", p50F },	// unofficial
 	{ "SEIKEN DENSETSU", p50E },
+	{ "SMURFS", bgbUF },	// unofficial (BGB)
 	{ "SOCCER", p502 },
 	{ "SOLARSTRIKER", p013 },
 	{ "SPACE INVADERS", p013 },
