@@ -1,6 +1,6 @@
 /*
  Copyright (c) 2015, OpenEmu Team
- 
+
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
      * Redistributions of source code must retain the above copyright
@@ -11,7 +11,7 @@
      * Neither the name of the OpenEmu Team nor the
        names of its contributors may be used to endorse or promote products
        derived from this software without specific prior written permission.
- 
+
  THIS SOFTWARE IS PROVIDED BY OpenEmu Team ''AS IS'' AND ANY
  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -339,44 +339,41 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
 
         NSArray <NSDictionary <NSString *, id> *> *availableModesWithDefault =
         @[
-          Option(@"Internal", @"palette"),
-          Option(@"Grayscale", @"palette"),
-          Option(@"Greenscale", @"palette"),
-          Option(@"Pocket", @"palette"),
+          Option(@"Optimal Palette", @"palette"),
           SeparatorItem(),
-          Label(@"GBC Palettes"),
-          Option(@"Blue", @"palette"),
-          Option(@"Dark Blue", @"palette"),
-          Option(@"Green", @"palette"),
-          Option(@"Dark Green", @"palette"),
-          Option(@"Brown", @"palette"),
-          Option(@"Dark Brown", @"palette"),
-          Option(@"Red", @"palette"),
-          Option(@"Yellow", @"palette"),
-          Option(@"Orange", @"palette"),
-          Option(@"Pastel Mix", @"palette"),
-          Option(@"Inverted", @"palette"),
-//          @{ OEGameCoreDisplayModeGroupNameKey      : @"Test Menu",
-//             OEGameCoreDisplayModeGroupItemsKey     : @[
-//                     OptionToggleable(@"Toggle 1", @"toggle1"),
-//                     OptionToggleable(@"Toggle 2", @"toggle2"),
-//                     SeparatorItem(),
-//                     Label(@"Group 1"),
-//                     OptionIndented(@"Option 1", @"option"),
-//                     OptionIndented(@"Option 2", @"option"),
-//                     SeparatorItem(),
-//                     Label(@"Group 2"),
-//                     OptionIndented(@"Option 3", @"option2"),
-//                     OptionIndented(@"Option 4", @"option2"),
-//                     ]
-//             },
-          ];
+          Label(@"Internal Palettes"),
+          Option(@"Super Game Boy", @"palette"),
+          Option(@"Game Boy Color", @"palette"),
+          SeparatorItem(),
+          Label(@"Hardware Palettes"),
+          Option(@"Dot Matrix", @"palette"),
+          Option(@"Game Boy Pocket", @"palette"),
+          Option(@"Game Boy Light", @"palette"),
+          SeparatorItem(),
+          Label(@"Monochrome Palettes"),
+          Option(@"SGB Grayscale", @"palette"),
+          Option(@"SGB Greenscale", @"palette"),
+          Option(@"GBC Grayscale", @"palette"),
+          SeparatorItem(),
+          Label(@"Virtual Console"),
+          Option(@"VC Greenscale", @"palette"),
+          Option(@"VC Grayscale", @"palette"),
+          SeparatorItem(),
+          Label(@"Lateral Thinking"),
+          Option(@"Game & Watch", @"palette"),
+          Option(@"Virtual Boy", @"palette"),
+          Option(@"WonderSwan", @"palette"),
+          SeparatorItem(),
+          Label(@"Extra Palettes"),
+          Option(@"Demo Vision", @"palette"),
+          Option(@"Wide-Boy", @"palette"),
+          Option(@"Portable Power", @"palette"),
+          Option(@"Pocket Tales", @"palette"),
+          Option(@"GB Studio", @"palette")
+        ];
 
         // Deep mutable copy
         _availableDisplayModes = (NSMutableArray *)CFBridgingRelease(CFPropertyListCreateDeepCopy(kCFAllocatorDefault, (CFArrayRef)availableModesWithDefault, kCFPropertyListMutableContainers));
-
-        if (![self gameHasInternalPalette])
-            [_availableDisplayModes removeObjectAtIndex:0];
     }
 
     return [_availableDisplayModes copy];
@@ -524,52 +521,100 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
     else
     {
         NSString *lastPalette = self.displayModeInfo[@"palette"];
-        // Don't try to load "Internal" palette for a game without one
-        if ([lastPalette isEqualToString:@"Internal"] && ![self gameHasInternalPalette])
-            [self changeDisplayWithMode:@"Grayscale"];
-        else
-            [self changeDisplayWithMode:lastPalette];
+        [self changeDisplayWithMode:lastPalette];
     }
 }
 
 - (void)loadPaletteDefault
 {
-    if ([self gameHasInternalPalette])
-        // load a GBC BIOS builtin palette
-        [self changeDisplayWithMode:@"Internal"];
-    else
-        // no custom palette found, load the default (Original Grayscale)
-        [self changeDisplayWithMode:@"Grayscale"];
+    [self changeDisplayWithMode:@"Optimal Palette"];
 }
 
 - (void)changePalette:(NSString *)palette
 {
     NSDictionary <NSString *, NSString *> *paletteNames =
     @{
-      @"Internal"   : @"Internal",
-      @"Grayscale"  : @"GBC - Grayscale",
-      @"Greenscale" : @"Greenscale",
-      @"Pocket"     : @"Pocket",
-      @"Blue"       : @"GBC - Blue",
-      @"Dark Blue"  : @"GBC - Dark Blue",
-      @"Green"      : @"GBC - Green",
-      @"Dark Green" : @"GBC - Dark Green",
-      @"Brown"      : @"GBC - Brown",
-      @"Dark Brown" : @"GBC - Dark Brown",
-      @"Red"        : @"GBC - Red",
-      @"Yellow"     : @"GBC - Yellow",
-      @"Orange"     : @"GBC - Orange",
-      @"Pastel Mix" : @"GBC - Pastel Mix",
-      @"Inverted"   : @"GBC - Inverted",
-      };
+      @"Optimal Palette"  : @"Optimal",
+      @"Super Game Boy"   : @"SGB",
+      @"Game Boy Color"   : @"GBC",
+      @"Dot Matrix"       : @"GB - DMG",
+      @"Game Boy Pocket"  : @"GB - MGB",
+      @"Game Boy Light"   : @"GB - Light",
+      @"SGB Grayscale"    : @"SGB - 2H",
+      @"SGB Greenscale"   : @"SGB - 4H",
+      @"GBC Grayscale"    : @"GBC - Gray",
+      @"VC Greenscale"    : @"VC - Green",
+      @"VC Grayscale"     : @"VC - Gray",
+      @"Game & Watch"     : @"GW Classic LCD",
+      @"Virtual Boy"      : @"Virtual Boy",
+      @"WonderSwan"       : @"WonderSwan",
+      @"Demo Vision"      : @"Demo Vision",
+      @"Wide-Boy"         : @"Wide-Boy",
+      @"Portable Power"   : @"Portable Power",
+      @"Pocket Tales"     : @"Pocket Tales",
+      @"GB Studio"        : @"GB Studio"
+    };
 
     palette = paletteNames[palette];
     unsigned short *gbc_bios_palette = NULL;
+    unsigned short *sgb_bios_palette = NULL;
 
-    if ([palette isEqualToString:@"Internal"])
+    if ([palette isEqualToString:@"Optimal"])
     {
         NSString *title = [self gameInternalName];
-        gbc_bios_palette = const_cast<unsigned short *>(findGbcTitlePal(title.UTF8String));
+
+        gbc_bios_palette = const_cast<unsigned short *>(findGbcTitlePal(title.UTF8String)); // load a GBC BIOS built-in palette
+        sgb_bios_palette = const_cast<unsigned short *>(findSgbTitlePal(title.UTF8String)); // load a SGB BIOS built-in palette
+
+        // if both GBC and SGB palettes are defined, use whichever is more colourful
+        if (gbc_bios_palette != 0)
+        {
+          if (sgb_bios_palette != 0)
+          {
+            if ((gbc_bios_palette == p005) || (gbc_bios_palette == p006) || (gbc_bios_palette == p007) || (gbc_bios_palette == p008) || (gbc_bios_palette == p012) || (gbc_bios_palette == p013) || (gbc_bios_palette == p016) || (gbc_bios_palette == p017) || (gbc_bios_palette == p01B))
+            {
+              // if a limited color GBC palette, use SGB equivalent
+              gbc_bios_palette = sgb_bios_palette;
+            }
+          }
+        }
+
+        if (gbc_bios_palette == 0)
+        {
+            // no custom GBC palette found, load the SGB BIOS builtin palette
+            gbc_bios_palette = sgb_bios_palette;
+        }
+
+        if (gbc_bios_palette == 0)
+        {
+            // no custom palette found, load GB Pocket palette
+            // NOTE: I found traditional grayscale with a white background is a bit blinding
+            gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("GB - MGB"));
+        }
+    }
+    else if ([palette isEqualToString:@"SGB"])
+    {
+        NSString *title = [self gameInternalName];
+
+        gbc_bios_palette = const_cast<unsigned short *>(findSgbTitlePal(title.UTF8String)); // load a SGB BIOS built-in palette
+
+        if (gbc_bios_palette == 0)
+        {
+            // no custom palette found, load SGB Default 1-A
+            gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("SGB - 1A"));
+        }
+    }
+    else if ([palette isEqualToString:@"GBC"])
+    {
+        NSString *title = [self gameInternalName];
+
+        gbc_bios_palette = const_cast<unsigned short *>(findGbcTitlePal(title.UTF8String)); // load a GBC BIOS built-in palette
+
+        if (gbc_bios_palette == 0)
+        {
+            // no custom palette found, load GBC Default
+            gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("GBC - Dark Green"));
+        }
     }
     else if ([palette isEqualToString:@"Greenscale"])
     {
@@ -603,19 +648,6 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
         gb.setDmgPaletteColor(2, 1, 10987158);
         gb.setDmgPaletteColor(2, 2, 6974033);
         gb.setDmgPaletteColor(2, 3, 2828823);
-
-//        gb.setDmgPaletteColor(0, 0, 13029285);
-//        gb.setDmgPaletteColor(0, 1, 9213547);
-//        gb.setDmgPaletteColor(0, 2, 4870457);
-//        gb.setDmgPaletteColor(0, 3, 1580056);
-//        gb.setDmgPaletteColor(1, 0, 13029285);
-//        gb.setDmgPaletteColor(1, 1, 9213547);
-//        gb.setDmgPaletteColor(1, 2, 4870457);
-//        gb.setDmgPaletteColor(1, 3, 1580056);
-//        gb.setDmgPaletteColor(2, 0, 13029285);
-//        gb.setDmgPaletteColor(2, 1, 9213547);
-//        gb.setDmgPaletteColor(2, 2, 4870457);
-//        gb.setDmgPaletteColor(2, 3, 1580056);
         return;
     }
     else
