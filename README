@@ -1,0 +1,48 @@
+Gambatte JG
+-----------
+Gambatte JG is an emulator for the Nintendo Game Boy/Game Boy Color.
+
+Source for the emulator core is unmodified from upstream sources with the
+exception of a patch which allows loading content from a memory buffer.
+Additionally, the directory structure has been flattened and unneeded code
+has been removed.
+
+Compiling
+---------
+Make sure you have The Jolly Good API's header files installed. If you did
+not install them, you will be required to include their path in CXXFLAGS.
+
+Linux:
+  make
+
+macOS:
+  make
+
+BSD:
+  gmake
+
+Windows (MSYS2):
+  make
+
+The build will be output to "gambatte/". This directory may be used as is
+locally by copying it to your local "cores" directory, or may be installed
+system-wide using the "install" target specified in the Makefile.
+
+Settings
+--------
+palette = 0
+0 = Internal, 1 = Original Green, 2 = GB Pocket, 3 = Blue, 4 = Brown,
+5 = Dark Blue, 6 = Dark Brown, 7 = Dark Green, 8 = Grayscale, 9 = Green,
+10 = Inverted, 11 = Orange, 12 = Pastel Mix, 13 = Red, 14 = Yellow
+
+system = 0
+0 = Auto (CGB), 1 = DMG, 2 = GBA-CGB
+
+turbo_rate = 3
+N = Pulse every N frames
+
+Copyright
+---------
+Gambatte JG (GPL-2.0-or-later)
+  Copyright (c) 2007-2020 Sindre Aamås
+  Copyright (c) 2020-2022 Rupert Carmichael
