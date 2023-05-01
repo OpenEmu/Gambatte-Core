@@ -146,6 +146,10 @@ void GB::saveSavedata() {
 		p_->cpu.saveSavedata();
 }
 
+void GB::setCgbColorCorrection(int optNum) {
+	p_->cpu.setCgbColorCorrection(optNum);
+}
+
 void GB::setDmgPaletteColor(int palNum, int colorNum, unsigned long rgb32) {
 	p_->cpu.setDmgPaletteColor(palNum, colorNum, rgb32);
 }

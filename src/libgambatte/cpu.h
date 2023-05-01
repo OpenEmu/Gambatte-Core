@@ -66,6 +66,10 @@ public:
 	std::size_t fillSoundBuffer() { return mem_.fillSoundBuffer(cycleCounter_); }
 	bool isCgb() const { return mem_.isCgb(); }
 
+	void setCgbColorCorrection(int optNum) {
+		mem_.setCgbColorCorrection(optNum);
+	}
+
 	void setDmgPaletteColor(int palNum, int colorNum, unsigned long rgb32) {
 		mem_.setDmgPaletteColor(palNum, colorNum, rgb32);
 	}

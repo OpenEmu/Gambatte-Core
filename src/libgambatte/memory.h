@@ -105,6 +105,10 @@ public:
 		lcd_.setVideoBuffer(videoBuf, pitch);
 	}
 
+	void setCgbColorCorrection(int optNum) {
+		lcd_.setCgbColorCorrection(optNum);
+	}
+
 	void setDmgPaletteColor(int palNum, int colorNum, unsigned long rgb32) {
 		lcd_.setDmgPaletteColor(palNum, colorNum, rgb32);
 	}

@@ -99,7 +99,7 @@ struct PPUPriv {
 	bool cgb;
 	bool weMaster;
 
-	PPUPriv(NextM0Time &nextM0Time, unsigned char const *oamram, unsigned char const *vram);
+	PPUPriv(NextM0Time&, unsigned char const*, unsigned char const*);
 };
 
 class PPU {
@@ -127,7 +127,7 @@ public:
 	void oamChange(unsigned long cc) { p_.spriteMapper.oamChange(cc); }
 	void oamChange(unsigned char const *oamram, unsigned long cc) { p_.spriteMapper.oamChange(oamram, cc); }
 	unsigned long predictedNextXposTime(unsigned xpos) const;
-	void reset(unsigned char const *oamram, unsigned char const *vram, bool cgb);
+	void reset(unsigned char const*, unsigned char const*, bool);
 	void resetCc(unsigned long oldCc, unsigned long newCc);
 	void saveState(SaveState &ss) const;
 	void setFrameBuf(uint_least32_t *buf, std::ptrdiff_t pitch) { p_.framebuf.setBuf(buf, pitch); }

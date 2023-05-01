@@ -1,3 +1,19 @@
+Version 0.5.1
+-------------
+ - Build improvements
+ - Increase standards compliance and code quality
+ - Add the SoX Resampler for higher quality (but higher CPU usage) resampling
+ - Add SameBoy's "Modern - Accurate" colour correction
+
+Version 0.5.0
+-------------
+ - Initial tagged release after fork from final public revision of Gambatte
+ - Stricter build flags
+ - Removal of stale, bitrotten code
+ - Rearrange and simplify codebase layout
+
+--------------------------------------------------------------------------------
+
 -- 0.4.1 -- 2009-01-10
 libgambatte:
     - Fix HqXx filter pitch.

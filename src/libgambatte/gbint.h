@@ -19,44 +19,11 @@
 #ifndef GAMBATTE_INT_H
 #define GAMBATTE_INT_H
 
-#ifdef HAVE_CSTDINT
-
-#include <cstdint>
-
-namespace gambatte {
-using std::uint_least32_t;
-using std::uint_least16_t;
-}
-
-#elif defined(HAVE_STDINT_H)
-
 #include <stdint.h>
 
 namespace gambatte {
 using ::uint_least32_t;
 using ::uint_least16_t;
 }
-
-#else
-
-namespace gambatte {
-#ifdef CHAR_LEAST_32
-typedef unsigned char uint_least32_t;
-#elif defined(SHORT_LEAST_32)
-typedef unsigned short uint_least32_t;
-#elif defined(INT_LEAST_32)
-typedef unsigned uint_least32_t;
-#else
-typedef unsigned long uint_least32_t;
-#endif
-
-#ifdef CHAR_LEAST_16
-typedef unsigned char uint_least16_t;
-#else
-typedef unsigned short uint_least16_t;
-#endif
-}
-
-#endif
 
 #endif

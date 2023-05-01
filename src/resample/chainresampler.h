@@ -55,12 +55,9 @@ private:
 	std::size_t const periodSize_;
 	std::size_t maxOut_;
 
-	ChainResampler(long inRate, long outRate, std::size_t periodSize);
-	void downinitAddSincResamplers(double ratio, float outRate,
-	                               CreateSinc createBigSinc,
-	                               CreateSinc createSmallSinc,
-	                               double gain);
-	void upinit(long inRate, long outRate, CreateSinc);
+	ChainResampler(long, long, std::size_t);
+	void downinitAddSincResamplers(double, float, CreateSinc, CreateSinc, double);
+	void upinit(long, long, CreateSinc);
 	void reallocateBuffer();
 
 	template<class Sinc>

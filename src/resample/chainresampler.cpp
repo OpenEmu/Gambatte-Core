@@ -136,7 +136,7 @@ void ChainResampler::downinitAddSincResamplers(double ratio,
 
 void ChainResampler::upinit(long const inRate,
                             long const outRate,
-                            CreateSinc const createSinc) {
+                            CreateSinc const mkSinc) {
 	double ratio = static_cast<double>(outRate) / inRate;
 	// Spectral images above 20 kHz assumed inaudible
 	// this post-polyphase zero stuffing causes some power loss though.
@@ -149,7 +149,7 @@ void ChainResampler::upinit(long const inRate,
 	}
 
 	float const rollOffLen = std::max((inRate - 36000.0f) / inRate, 0.2f);
-	bigSinc_ = createSinc(static_cast<int>(big_sinc_mul / ratio + 0.5),
+	bigSinc_ = mkSinc(static_cast<int>(big_sinc_mul / ratio + 0.5),
 	                      0.5f * (1 - rollOffLen),
 	                      0.5f * rollOffLen,
 	                      1.0);

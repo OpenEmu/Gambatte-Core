@@ -6,7 +6,7 @@
 template<class T, class Deleter = defined_deleter>
 class transfer_ptr {
 private:
-	struct released { T *p; explicit released(T *p) : p(p) {} };
+	struct released { T *p; explicit released(T *pp) : p(pp) {} };
 public:
 	explicit transfer_ptr(T *p = 0) : p_(p) {}
 	transfer_ptr(transfer_ptr &p) : p_(p.release()) {}

@@ -103,6 +103,11 @@ public:
 	void reset();
 
 	/**
+	  * @param optNum 0 <= palNum < 1
+	  */
+	void setCgbColorCorrection(int optNum);
+
+	/**
 	  * @param palNum 0 <= palNum < 3. One of BG_PALETTE, SP1_PALETTE and SP2_PALETTE.
 	  * @param colorNum 0 <= colorNum < 4
 	  */

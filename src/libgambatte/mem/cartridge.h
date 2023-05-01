@@ -78,7 +78,7 @@ private:
 	struct AddrData {
 		unsigned long addr;
 		unsigned char data;
-		AddrData(unsigned long addr, unsigned data) : addr(addr), data(data) {}
+		AddrData(unsigned long _addr, unsigned _data) : addr(_addr), data(_data) {}
 	};
 
 	MemPtrs memptrs_;

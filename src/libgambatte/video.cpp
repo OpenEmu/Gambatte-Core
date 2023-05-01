@@ -20,50 +20,19 @@
 #include "savestate.h"
 
 #include <algorithm>
+#include <cmath>
 
 using namespace gambatte;
 
 namespace {
 
-unsigned long gbcToRgb32(unsigned const bgr15) {
-	unsigned long const r = bgr15       & 0x1F;
-	unsigned long const g = bgr15 >>  5 & 0x1F;
-	unsigned long const b = bgr15 >> 10 & 0x1F;
-
-	return ((r * 13 + g * 2 + b) >> 1) << 16
-	| (g * 3 + b) << 9
-	| (r * 3 + g * 2 + b * 11) >> 1;
-}
-
-/*unsigned long gbcToRgb16(unsigned const bgr15) {
-	unsigned const r = bgr15 & 0x1F;
-	unsigned const g = bgr15 >> 5 & 0x1F;
-	unsigned const b = bgr15 >> 10 & 0x1F;
-
-	return (((r * 13 + g * 2 + b + 8) << 7) & 0xF800)
-	     | ((g * 3 + b + 1) >> 1) << 5
-	     | ((r * 3 + g * 2 + b * 11 + 8) >> 4);
-}
-
-unsigned long gbcToUyvy(unsigned const bgr15) {
-	unsigned const r5 = bgr15 & 0x1F;
-	unsigned const g5 = bgr15 >> 5 & 0x1F;
-	unsigned const b5 = bgr15 >> 10 & 0x1F;
-
-	// y = (r5 * 926151 + g5 * 1723530 + b5 * 854319) / 510000 + 16;
-	// u = (b5 * 397544 - r5 * 68824 - g5 * 328720) / 225930 + 128;
-	// v = (r5 * 491176 - g5 * 328720 - b5 * 162456) / 178755 + 128;
-
-	unsigned long const y = (r5 * 116 + g5 * 216 + b5 * 107 + 16 * 64 + 32) >> 6;
-	unsigned long const u = (b5 * 225 - r5 * 39 - g5 * 186 + 128 * 128 + 64) >> 7;
-	unsigned long const v = (r5 * 176 - g5 * 118 - b5 * 58 + 128 * 64 + 32) >> 6;
-
-#ifdef WORDS_BIGENDIAN
-	return u << 24 | y << 16 | v << 8 | y;
-#else
-	return y << 24 | v << 16 | y << 8 | u;
-#endif
-}*/
+// Values from SameBoy - https://sameboy.github.io/
+const unsigned char gbcCurves[0x20] = {
+	0x00, 0x06, 0x0c, 0x14, 0x1c, 0x24, 0x2d, 0x38,
+	0x42, 0x4c, 0x58, 0x64, 0x71, 0x7d, 0x89, 0x95,
+	0xa1, 0xac, 0xb6, 0xc0, 0xca, 0xd2, 0xda, 0xe1,
+	0xe8, 0xee, 0xf3, 0xf7, 0xfa, 0xfc, 0xfe, 0xff
+};
 
 // TODO: simplify cycle offsets.
 
@@ -101,14 +70,43 @@ bool isHdmaPeriod(LyCounter const &lyCounter,
 	&& cc >= m0TimeOfCurrentLy;
 }
 
-void doCgbColorChange(unsigned char *pdata,
+} // unnamed namespace.
+
+unsigned long LCD::gbcToRgb32(unsigned const bgr15) {
+	// Technique used is equal to SameBoy's "Modern - Accurate"
+	if (cgbColorCorrection) {
+		unsigned char r = gbcCurves[bgr15       & 0x1F];
+		unsigned char g = gbcCurves[bgr15 >>  5 & 0x1F];
+		unsigned char b = gbcCurves[bgr15 >> 10 & 0x1F];
+
+		if (g != b) {
+			double gamma = 2.2;
+			g = round(pow((pow(g / 255.0, gamma) * 3 + pow(b / 255.0, gamma)) / 4, 1 / gamma) * 255);
+		}
+
+		#ifdef WORDS_BIGENDIAN
+		return b << 24 | g << 16 | r << 8;
+		#else
+		return r << 16 | g << 8 | b;
+		#endif
+	}
+
+	// Default Color Curves
+	unsigned long const r = bgr15       & 0x1F;
+	unsigned long const g = bgr15 >>  5 & 0x1F;
+	unsigned long const b = bgr15 >> 10 & 0x1F;
+
+	return ((r * 13 + g * 2 + b) >> 1) << 16
+	| (g * 3 + b) << 9
+	| (r * 3 + g * 2 + b * 11) >> 1;
+}
+
+void LCD::doCgbColorChange(unsigned char *pdata,
 		unsigned long *palette, unsigned index, unsigned data) {
 	pdata[index] = data;
 	index /= 2;
 	palette[index] = gbcToRgb32(pdata[index * 2] | pdata[index * 2 + 1] * 0x100l);
 }
-
-} // unnamed namespace.
 
 void LCD::setDmgPalette(unsigned long palette[], unsigned long const dmgColors[], unsigned data) {
 	for (int i = 0; i < num_palette_entries; ++i, data /= num_palette_entries)
@@ -543,8 +541,9 @@ void LCD::lcdcChange(unsigned const data, unsigned long const cc) {
 namespace {
 
 struct LyCnt {
-	unsigned ly; int timeToNextLy;
-	LyCnt(unsigned ly, int timeToNextLy) : ly(ly), timeToNextLy(timeToNextLy) {}
+	unsigned ly;
+	int timeToNextLy;
+	LyCnt(unsigned _ly, int _timeToNextLy) : ly(_ly), timeToNextLy(_timeToNextLy) {}
 };
 
 LyCnt const getLycCmpLy(LyCounter const &lyCounter, unsigned long cc) {
@@ -868,6 +867,11 @@ void LCD::update(unsigned long const cycleCounter) {
 
 void LCD::setVideoBuffer(uint_least32_t *videoBuf, std::ptrdiff_t pitch) {
 	ppu_.setFrameBuf(videoBuf, pitch);
+}
+
+void LCD::setCgbColorCorrection(unsigned optNum) {
+	cgbColorCorrection = optNum;
+	refreshPalettes();
 }
 
 void LCD::setDmgPaletteColor(unsigned palNum, unsigned colorNum, unsigned long rgb32) {

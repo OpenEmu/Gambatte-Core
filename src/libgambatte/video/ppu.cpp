@@ -1530,12 +1530,12 @@ namespace M2_LyNon0 {
 
 } // anon namespace
 
-PPUPriv::PPUPriv(NextM0Time &nextM0Time, unsigned char const *const oamram, unsigned char const *const vram)
+PPUPriv::PPUPriv(NextM0Time &nextM0Time, unsigned char const *const oamram, unsigned char const *const _vram)
 : spriteList()
 , spwordList()
 , nextSprite(0)
 , currentSprite(0xFF)
-, vram(vram)
+, vram(_vram)
 , nextCallPtr(&M2_Ly0::f0_)
 , now(0)
 , lastM0Time(0)

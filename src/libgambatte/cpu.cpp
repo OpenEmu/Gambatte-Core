@@ -520,8 +520,8 @@ void CPU::process(unsigned long const cycles) {
 
 		if (mem_.halted()) {
 			if (cycleCounter < mem_.nextEventTime()) {
-				unsigned long cycles = mem_.nextEventTime() - cycleCounter;
-				cycleCounter += cycles + (-cycles & 3);
+				unsigned long cpu_cycles = mem_.nextEventTime() - cycleCounter;
+				cycleCounter += cpu_cycles + (-cpu_cycles & 3);
 			}
 		} else while (cycleCounter < mem_.nextEventTime()) {
 			unsigned char opcode;
@@ -614,8 +614,8 @@ void CPU::process(unsigned long const cycles) {
 				PC_READ(opcode_);
 				cycleCounter = mem_.stop(cycleCounter - 4, prefetched_);
 				if (cycleCounter < mem_.nextEventTime()) {
-					unsigned long cycles = mem_.nextEventTime() - cycleCounter;
-					cycleCounter += cycles + (-cycles & 3);
+					unsigned long cpu_cycles = mem_.nextEventTime() - cycleCounter;
+					cycleCounter += cpu_cycles + (-cpu_cycles & 3);
 				}
 
 				break;
@@ -1024,8 +1024,8 @@ void CPU::process(unsigned long const cycles) {
 					prefetched_ = mem_.halt(cycleCounter);
 					cycleCounter += 4 + 4 * !mem_.isCgb();
 					if (cycleCounter < mem_.nextEventTime()) {
-						unsigned long cycles = mem_.nextEventTime() - cycleCounter;
-						cycleCounter += cycles + (-cycles & 3);
+						unsigned long cpu_cycles = mem_.nextEventTime() - cycleCounter;
+						cycleCounter += cpu_cycles + (-cpu_cycles & 3);
 					}
 				}
 

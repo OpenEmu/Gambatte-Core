@@ -54,6 +54,7 @@ public:
 	void setStatePtrs(SaveState &state);
 	void saveState(SaveState &state) const;
 	void loadState(SaveState const &state, unsigned char const *oamram);
+	void setCgbColorCorrection(unsigned optNum);
 	void setDmgPaletteColor(unsigned palNum, unsigned colorNum, unsigned long rgb32);
 	void setVideoBuffer(uint_least32_t *videoBuf, std::ptrdiff_t pitch);
 	void setOsdElement(transfer_ptr<OsdElement> osdElement) { osdElement_ = osdElement; }
@@ -209,15 +210,19 @@ private:
 	NextM0Time nextM0Time_;
 	scoped_ptr<OsdElement> osdElement_;
 	unsigned char statReg_;
+	unsigned cgbColorCorrection;
 
 	static void setDmgPalette(unsigned long palette[],
 	                          unsigned long const dmgColors[],
 	                          unsigned data);
 	void refreshPalettes();
 	void setDBuffer();
+	void doCgbColorChange(unsigned char *pdata,
+		unsigned long *palette, unsigned index, unsigned data);
 	void doMode2IrqEvent();
 	void event();
 	unsigned long m0TimeOfCurrentLine(unsigned long cc);
+	unsigned long gbcToRgb32(unsigned const bgr15);
 	bool cgbpAccessible(unsigned long cycleCounter);
 	bool lycRegChangeStatTriggerBlockedByM0OrM1Irq(unsigned data, unsigned long cc);
 	bool lycRegChangeTriggersStatIrq(unsigned old, unsigned data, unsigned long cc);
