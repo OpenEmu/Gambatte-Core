@@ -68,6 +68,7 @@ public:
 
 - (void)applyCheat:(NSString *)code;
 
+- (void)loadDisplayModeOptions;
 - (NSString *)gameInternalName;
 - (BOOL)gameHasInternalPalette;
 - (void)loadPalette;
@@ -127,9 +128,7 @@ public:
     if (gb.load(path.fileSystemRepresentation) != 0)
         return NO;
 
-    // Load built-in GBC palette for monochrome games if supported
-    if (!gb.isCgb())
-        [self loadPalette];
+    [self loadDisplayModeOptions];
 
     return YES;
 }
@@ -330,52 +329,49 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
 
 - (NSArray <NSDictionary <NSString *, id> *> *)displayModes
 {
-    if (gb.isCgb())
-        return nil;
-
     if (_availableDisplayModes.count == 0)
     {
         _availableDisplayModes = [NSMutableArray array];
 
-        NSArray <NSDictionary <NSString *, id> *> *availableModesWithDefault =
-        @[
-          Option(@"Internal", @"palette"),
-          Option(@"Grayscale", @"palette"),
-          Option(@"Greenscale", @"palette"),
-          Option(@"Pocket", @"palette"),
-          SeparatorItem(),
-          Label(@"GBC Palettes"),
-          Option(@"Blue", @"palette"),
-          Option(@"Dark Blue", @"palette"),
-          Option(@"Green", @"palette"),
-          Option(@"Dark Green", @"palette"),
-          Option(@"Brown", @"palette"),
-          Option(@"Dark Brown", @"palette"),
-          Option(@"Red", @"palette"),
-          Option(@"Yellow", @"palette"),
-          Option(@"Orange", @"palette"),
-          Option(@"Pastel Mix", @"palette"),
-          Option(@"Inverted", @"palette"),
-//          @{ OEGameCoreDisplayModeGroupNameKey      : @"Test Menu",
-//             OEGameCoreDisplayModeGroupItemsKey     : @[
-//                     OptionToggleable(@"Toggle 1", @"toggle1"),
-//                     OptionToggleable(@"Toggle 2", @"toggle2"),
-//                     SeparatorItem(),
-//                     Label(@"Group 1"),
-//                     OptionIndented(@"Option 1", @"option"),
-//                     OptionIndented(@"Option 2", @"option"),
-//                     SeparatorItem(),
-//                     Label(@"Group 2"),
-//                     OptionIndented(@"Option 3", @"option2"),
-//                     OptionIndented(@"Option 4", @"option2"),
-//                     ]
-//             },
-          ];
+        NSArray <NSDictionary <NSString *, id> *> *availableModesWithDefault;
+
+        if (gb.isCgb())
+        {
+            availableModesWithDefault =
+            @[
+                Label(@"Color Correction"),
+                OptionDefault(@"Default", @"colorCorrection"),
+                Option(@"Modern", @"colorCorrection"),
+            ];
+        }
+        else
+        {
+            availableModesWithDefault =
+            @[
+                Option(@"Internal", @"palette"),
+                Option(@"Grayscale", @"palette"),
+                Option(@"Greenscale", @"palette"),
+                Option(@"Pocket", @"palette"),
+                SeparatorItem(),
+                Label(@"GBC Palettes"),
+                Option(@"Blue", @"palette"),
+                Option(@"Dark Blue", @"palette"),
+                Option(@"Green", @"palette"),
+                Option(@"Dark Green", @"palette"),
+                Option(@"Brown", @"palette"),
+                Option(@"Dark Brown", @"palette"),
+                Option(@"Red", @"palette"),
+                Option(@"Yellow", @"palette"),
+                Option(@"Orange", @"palette"),
+                Option(@"Pastel Mix", @"palette"),
+                Option(@"Inverted", @"palette"),
+            ];
+        }
 
         // Deep mutable copy
         _availableDisplayModes = (NSMutableArray *)CFBridgingRelease(CFPropertyListCreateDeepCopy(kCFAllocatorDefault, (CFArrayRef)availableModesWithDefault, kCFPropertyListMutableContainers));
 
-        if (![self gameHasInternalPalette])
+        if (!gb.isCgb() && ![self gameHasInternalPalette])
             [_availableDisplayModes removeObjectAtIndex:0];
     }
 
@@ -470,6 +466,8 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
     // Set the new palette
     if ([displayModePrefKey isEqualToString:@"palette"])
         [self changePalette:displayMode];
+    else if ([displayModePrefKey isEqualToString:@"colorCorrection"])
+        gb.setCgbColorCorrection([displayMode isEqual:@"Modern"] ? 1 : 0);
 }
 
 # pragma mark - Misc Helper Methods
@@ -492,6 +490,21 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
         gb.setGameGenie(s);
     else
         gb.setGameShark(s);
+}
+
+- (void)loadDisplayModeOptions
+{
+    if (gb.isCgb())
+    {
+        // Restore color correction
+        NSString *lastColorCorrection = self.displayModeInfo[@"colorCorrection"] ?: @"Default";
+        [self changeDisplayWithMode:lastColorCorrection];
+    }
+    else
+    {
+        // Load built-in GBC palette for monochrome games if supported
+        [self loadPalette];
+    }
 }
 
 - (NSString *)gameInternalName
