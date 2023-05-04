@@ -488,12 +488,12 @@ static const unsigned short * findGbcTitlePal(const char *const title) {
 	return r < gbcTitlePalettesEnd() && !std::strcmp(r->title, title) ? r->p : 0;
 }
 
-static const unsigned short * findGbcPal(const char *const title) {
+/*static const unsigned short * findGbcPal(const char *const title) {
 	if (const unsigned short *const pal = findGbcDirPal(title))
 		return pal;
 	
 	return findGbcTitlePal(title);
-}
+}*/
 
 static unsigned long gbcToRgb32(const unsigned rgb15) {
 	const unsigned long r = rgb15 >> 10 & 0x1F;
