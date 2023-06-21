@@ -102,7 +102,7 @@ public:
 
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error
 {
-    memset(pad, 0, sizeof(uint32_t) * OEGBButtonCount);
+    memset(pad, 0, sizeof(pad));
 
     // Set battery save dir
     NSURL *batterySavesDirectory = [NSURL fileURLWithPath:self.batterySavesDirectoryPath];
@@ -480,7 +480,7 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
     size_t len = resampler->resample(_outSoundBuffer, reinterpret_cast<const int16_t *>(_inSoundBuffer), frames);
 
     if (len)
-        [[self ringBufferAtIndex:0] write:_outSoundBuffer maxLength:len << 2];
+        [[self audioBufferAtIndex:0] write:_outSoundBuffer maxLength:len << 2];
 }
 
 - (void)applyCheat:(NSString *)code
